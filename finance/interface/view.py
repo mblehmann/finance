@@ -3,6 +3,12 @@ from typing import Any, Dict, List, Protocol, Self, Tuple
 
 
 @dataclass
+class TableViewModel:
+    field_names: List[str]
+    rows: List[List[str]]
+
+
+@dataclass
 class BudgetItemViewModel:
     identifier: str
     name: str
@@ -42,6 +48,9 @@ class BudgetViewInterface(Protocol):
         ...
     
     def show_list(self, command: str, items: List[BudgetItemViewModel]) -> None:
+        ...
+    
+    def show_dict(self, command: str, item: TableViewModel) -> None:
         ...
     
     def show_failure(self, error: BudgetErrorViewModel) -> None:

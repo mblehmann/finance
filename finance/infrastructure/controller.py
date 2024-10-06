@@ -25,8 +25,11 @@ class CmdBudgetController(BudgetControllerInterface):
     def list_budget_items(self) -> None:
         self.budget_use_cases.list_use_case.execute()
 
-    def show_summary(self) -> None:
-        self.budget_use_cases.summary_use_case.execute()
+    def show_budget_overview(self) -> None:
+        self.budget_use_cases.overview_use_case.execute()
+        
+    def show_budget_distribution(self) -> None:
+        self.budget_use_cases.distribution_use_case.execute()
         
     def save_budget(self, project_name: str) -> None:
         self.budget_use_cases.save_use_case.execute(project_name)

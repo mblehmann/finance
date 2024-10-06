@@ -1,7 +1,7 @@
 from domain.report import CategoryReport, MonthResult
 from finance.application.dto import InteractorResultDto
 from finance.application.interface import BudgetPresenterInterface, HistoryPresenterInterface, ReportPresenterInterface
-from finance.interface.view import BudgetViewInterface, BudgetItemViewModel, BudgetErrorViewModel, CategoryReportViewModel, HistoryErrorViewModel, HistoryViewInterface, MonthResultViewModel, ReportViewInterface, TransactionViewModel
+from finance.interface.view import BudgetViewInterface, BudgetItemViewModel, BudgetErrorViewModel, CategoryReportViewModel, HistoryErrorViewModel, HistoryViewInterface, MonthResultViewModel, ReportViewInterface, TableViewModel, TransactionViewModel
 
 
 class CmdBudgetPresenter(BudgetPresenterInterface):
@@ -29,6 +29,14 @@ class CmdBudgetPresenter(BudgetPresenterInterface):
 
         items = [BudgetItemViewModel.from_dict(item) for item in result.data]
         self.view.show_list(f'{result.operation} succeeded', items)
+
+    def present_budget_table(self, result: InteractorResultDto) -> None:
+        if not result.success:
+            self.present_failure(result)
+            return
+        
+        item = TableViewModel(result.data['field_names'], result.data['rows'])
+        self.view.show_dict(f'{result.operation} succeeded', item)
 
     def present_success(self, result: InteractorResultDto) -> None:
         message = BudgetErrorViewModel(f'{result.operation} succeeded', result.data)

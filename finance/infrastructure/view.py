@@ -1,6 +1,6 @@
 from prettytable import PrettyTable
-from typing import List
-from finance.interface.view import BudgetErrorViewModel, BudgetItemViewModel, BudgetViewInterface, CategoryReportViewModel, HistoryErrorViewModel, HistoryViewInterface, MonthResultViewModel, ReportViewInterface, TransactionViewModel
+from typing import Dict, List
+from finance.interface.view import BudgetErrorViewModel, BudgetItemViewModel, BudgetViewInterface, CategoryReportViewModel, HistoryErrorViewModel, HistoryViewInterface, MonthResultViewModel, ReportViewInterface, TableViewModel, TransactionViewModel
 
 
 class CmdBudgetView(BudgetViewInterface):
@@ -18,6 +18,15 @@ class CmdBudgetView(BudgetViewInterface):
         for item in items:
             budget.add_row(list(item.to_dict().values()))
         print(budget)
+        print()
+
+    def show_dict(self, command: str, item: TableViewModel) -> None:
+        print(f'{command}')
+        table = PrettyTable()
+        table.field_names = item.field_names
+        for row in item.rows:
+            table.add_row(row)
+        print(table)
         print()
 
     def show_failure(self, error: BudgetErrorViewModel) -> None:

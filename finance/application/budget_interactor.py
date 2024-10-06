@@ -82,21 +82,6 @@ class DeleteBudgetItemUseCase:
         self.presenter.present_budget_item(result)
 
 
-# class GetBudgetItemUseCase:
-
-#     def __init__(self, budget: Budget) -> None:
-#         self.budget = budget
-
-#     def execute(self, budget_identifier: UUID) -> InteractorResultDto:
-#         try:
-#             response = self.budget.get_budget_item(budget_identifier)
-#             result = InteractorResultDto(success=True, data=response)
-#         except BudgetItemNotFoundException as e:
-#             result = InteractorResultDto(success=False, error=str(e))
-#         finally:
-#             return result
-
-
 class GetBudgetItemByCategoryUseCase:
 
     def __init__(self, budget: Budget, presenter: BudgetPresenterInterface) -> None:
@@ -133,19 +118,66 @@ class ListBudgetItemsUseCase:
         self.presenter.present_budget_list(result)
 
 
-class ShowBudgetSummaryUseCase:
+class ShowBudgetOverviewUseCase:
 
     def __init__(self, budget: Budget, presenter: BudgetPresenterInterface) -> None:
         self.budget = budget
         self.presenter = presenter
 
     def execute(self) -> None:
-        # TODO get budget statistics: sum income, sum expense, distribution by category, unassigned
-        operation = 'Show Budget Summary'
-        items = self.budget.list_budget_items()
-        response = [item.to_dict() for item in items]
-        result = InteractorResultDto(success=True, operation=operation, data=response)
-        self.presenter.present_budget_list(result)
+        operation = 'Show Budget Overview'
+        category_overview = {'field_names': ['Category', 'Amount'], 'rows': []}
+        category_distribution = {'field_names': ['Category', 'Amount', 'Percentage'], 'rows': []}
+
+        categories = {}
+        for category in BudgetCategory:
+            amount = sum(item.amount for item in self.budget.get_budget_item_by_category(category))
+            categories[category.name] = amount
+        expenses = categories['Needs'] + categories['Wants'] + categories['Savings']
+
+        rows = []
+        for category, amount in categories.items():
+            rows.append([category, '{:,.2f}'.format(amount), '{:.2%}'.format(amount / expenses) if category in ['Needs', 'Wants', 'Savings'] else '-'])
+        category_distribution['rows'] = rows
+
+        category_overview['rows'] = [
+            ['Income', '{:,.2f}'.format(categories['Income'])],
+            ['Expenses', '{:,.2f}'.format(expenses)],
+            ['Result', '{:,.2f}'.format(categories['Income'] - expenses)],
+            ['Unassigned', '{:,.2f}'.format(categories['Empty'])]
+        ]
+
+        overview_result = InteractorResultDto(success=True, operation=operation, data=category_overview)
+        self.presenter.present_budget_table(overview_result)
+
+        distribution_result = InteractorResultDto(success=True, operation=operation, data=category_distribution)
+        self.presenter.present_budget_table(distribution_result)
+
+
+class ShowBudgetDistributionUseCase:
+
+    def __init__(self, budget: Budget, presenter: BudgetPresenterInterface) -> None:
+        self.budget = budget
+        self.presenter = presenter
+
+    def execute(self) -> None:
+        operation = 'Show Budget Distribution'
+        distribution = {category.name: self.budget.get_budget_item_by_category(category) for category in BudgetCategory}
+
+        for category, items in distribution.items():
+            if not items:
+                continue
+            response = {'field_names': ['category', 'name', 'note', 'amount', 'percentage'], 'rows': []}
+            total = sum(item.amount for item in items)
+            if not total:
+                total = 0.001
+            rows = []
+            for item in sorted(items, key=lambda x: x.amount, reverse=True):
+                rows.append([category, item.name, item.note, '{:,.2f}'.format(item.amount), '{:.2%}'.format(item.amount / total)])
+            rows.append([category, 'Total', '', '{:,.2f}'.format(total), '{:.2%}'.format(total / total)])
+            response['rows'] = rows
+            result = InteractorResultDto(success=True, operation=f'{operation} - {category}', data=response)
+            self.presenter.present_budget_table(result)
 
 
 class SaveBudgetUseCase:

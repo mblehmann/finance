@@ -29,6 +29,9 @@ class BudgetPresenterInterface(Protocol):
     def present_budget_list(self, result: InteractorResultDto) -> None:
         ...
 
+    def present_budget_table(self, result: InteractorResultDto) -> None:
+        ...
+
     def present_success(self, result: InteractorResultDto) -> None:
         ...
 

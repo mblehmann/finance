@@ -13,7 +13,8 @@ from finance.application.budget_interactor import (
     GetBudgetItemByCategoryUseCase,
     LoadBudgetUseCase,
     SaveBudgetUseCase,
-    ShowBudgetSummaryUseCase,
+    ShowBudgetDistributionUseCase,
+    ShowBudgetOverviewUseCase,
     UpdateBudgetItemUseCase
 )
 
@@ -24,7 +25,8 @@ class BudgetUseCaseFacade:
     delete_use_case: DeleteBudgetItemUseCase
     get_by_category_use_case: GetBudgetItemByCategoryUseCase
     list_use_case: ListBudgetItemsUseCase
-    summary_use_case: ShowBudgetSummaryUseCase
+    overview_use_case: ShowBudgetOverviewUseCase
+    distribution_use_case: ShowBudgetDistributionUseCase
     save_use_case: SaveBudgetUseCase
     load_use_case: LoadBudgetUseCase
 
@@ -38,7 +40,8 @@ class BudgetUseCaseFacadeFactory:
                                    DeleteBudgetItemUseCase(budget, presenter),
                                    GetBudgetItemByCategoryUseCase(budget, presenter),
                                    ListBudgetItemsUseCase(budget, presenter),
-                                   ShowBudgetSummaryUseCase(budget, presenter),
+                                   ShowBudgetOverviewUseCase(budget, presenter),
+                                   ShowBudgetDistributionUseCase(budget, presenter),
                                    SaveBudgetUseCase(budget, repository, presenter),
                                    LoadBudgetUseCase(budget, repository, presenter))
 

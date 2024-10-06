@@ -28,7 +28,10 @@ class BudgetControllerInterface(Protocol):
     def list_budget_items(self) -> None:
         ...
     
-    def show_summary(self) -> None:
+    def show_budget_overview(self) -> None:
+        ...
+    
+    def show_budget_distribution(self) -> None:
         ...
         
     def save_budget(self, project_name: str) -> None:

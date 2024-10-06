@@ -155,9 +155,13 @@ class BudgetCmd(cmd.Cmd):
         """list: Lists all the budget items"""
         self.budget_controller.list_budget_items()
 
-    def do_show_summary(self, _: str) -> None:
-        """show_summary: Gets the budget statistic summary"""
-        self.budget_controller.show_summary()
+    def do_show_overview(self, _: str) -> None:
+        """show_overview: Gets the budget overview"""
+        self.budget_controller.show_budget_overview()
+
+    def do_show_distribution(self, _: str) -> None:
+        """show_distribution: Gets the budget distribution by category"""
+        self.budget_controller.show_budget_distribution()
 
     def do_save(self, args: str) -> None:
         """save <name>: Saves the budget with the given project name"""
