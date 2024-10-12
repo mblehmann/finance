@@ -14,9 +14,9 @@ class Transaction:
     notes: str
     category: str = field(compare=False)
     month: int = field(compare=False)
-    comments: str = field(compare=False)
     tag: str = field(compare=False)
-    exclude: bool = field(compare=False)
+    comments: str = field(compare=False)
+    ignore: bool = field(compare=False)
 
     @classmethod
     def from_dict(cls, data: Dict[str, str]) -> Self:
@@ -28,9 +28,9 @@ class Transaction:
             notes=data['notes'],
             category=data['category'],
             month=int(data['month']),
-            comments=data['comments'],
             tag=data['tag'],
-            exclude=True if data['exclude'] == 'True' else False,
+            comments=data['comments'],
+            ignore=True if data['ignore'] == 'True' else False,
         )
 
     def to_dict(self) -> Dict[str, Any]:
@@ -42,9 +42,9 @@ class Transaction:
             'notes': self.notes,
             'category': self.category,
             'month': self.month,
-            'comments': self.comments,
             'tag': self.tag,
-            'exclude': self.exclude,
+            'comments': self.comments,
+            'ignore': self.ignore,
         }
 
     def get_different_fields(self, other: Self) -> List[str]:
@@ -96,15 +96,12 @@ class History:
     
     def get_unreviewed_transactions(self) -> List[Transaction]:
         return list(filter(lambda item: not item.category, self.items.values()))
-        # return [item for item in self.items.values() if not item.category]
 
     def get_transactions_by_category(self, category: str) -> List[Transaction]:
         return list(filter(lambda item: item.category == category, self.items.values()))
-        # return [item for item in self.items.values() if item.category == category]
 
     def get_transactions_by_month(self, month: int) -> List[Transaction]:
         return list(filter(lambda item: item.month == month, self.items.values()))
-        # return [item for item in self.items.values() if item.month == month]
 
     def list_transactions(self) -> List[Transaction]:
         return list(self.items.values())

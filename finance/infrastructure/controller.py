@@ -48,12 +48,6 @@ class CmdHistoryController(HistoryControllerInterface):
     def import_transactions(self, filename: str) -> None:
         self.history_use_cases.import_use_case.execute(filename)
 
-    def update_transaction(self, reference: str, category: str, comments: str) -> None:
-        self.history_use_cases.update_use_case.execute(reference, category, comments)
-
-    def delete_transaction(self, reference: str) -> None:
-        self.history_use_cases.delete_use_case.execute(reference)
-
     def review_transactions(self) -> None:
         transactions = self.history_use_cases.review_use_case.execute()
         total = len(transactions)
@@ -62,15 +56,41 @@ class CmdHistoryController(HistoryControllerInterface):
             operation = f'Review Transaction {index+1}/{total}'
             review = InteractorResultDto(success=True, operation=operation, data=transaction.to_dict())
             self.presenter.present_transaction(review)
-            user_input = self.reader.get_input('Delete or categorize: ').split()
-            category = user_input[0]
-            comments = ' '.join(user_input[1:])
-            if category == 'delete':
+
+            delete = ''
+            while delete not in ['Y', 'N']:
+                delete = self.reader.get_input('Delete (Y/N)? ')
+
+            if delete == 'Y':
                 self.delete_transaction(transaction.reference)
             else:
-                self.update_transaction(transaction.reference, category, comments)
+                category = self.reader.get_input('Category: ')
+                month = self.reader.get_input('Month: ')
+                tag = self.reader.get_input('Tag: ')
+                comments = self.reader.get_input('Comments: ')
+                
+                fields = {}
+                if category:
+                    fields['category'] = category
+                if month:
+                    fields['month'] = month
+                if tag:
+                    fields['tag'] = tag
+                if comments:
+                    fields['comments'] = comments
+
+                self.update_transaction(transaction.reference, **fields)
 
         self.history_use_cases.review_use_case.execute()
+
+    def update_transaction(self, reference: str, **kwargs) -> None:
+        self.history_use_cases.update_use_case.execute(reference, **kwargs)
+
+    def ignore_transaction(self, reference: str, ignore: bool) -> None:
+        self.history_use_cases.ignore_use_case.execute(reference, ignore)
+
+    def delete_transaction(self, reference: str) -> None:
+        self.history_use_cases.delete_use_case.execute(reference)
         
     def save_budget(self, project_name: str) -> None:
         self.history_use_cases.save_use_case.execute(project_name)

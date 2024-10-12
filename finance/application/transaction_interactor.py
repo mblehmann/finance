@@ -34,6 +34,23 @@ class ImportTransactionsUseCase:
             result = InteractorResultDto(success=True, operation=operation, data=response)
 
         self.presenter.present_import_transactions(result)
+
+
+class ReviewTransactionsUseCase:
+
+    def __init__(self, history: History, presenter: HistoryPresenterInterface) -> None:
+        self.history = history
+        self.presenter = presenter
+
+    def execute(self) -> List[TransactionDto]:
+        result: InteractorResultDto = None
+        operation = 'Review Transactions'
+        transactions = self.history.get_unreviewed_transactions()
+        response = [TransactionDto.from_dict(item.to_dict()) for item in transactions]
+
+        result = InteractorResultDto(success=True, operation=operation, data=response)
+        self.presenter.present_review_transactions(result)
+        return response
     
 
 class UpdateTransactionUseCase:
@@ -42,9 +59,37 @@ class UpdateTransactionUseCase:
         self.history = history
         self.presenter = presenter
 
-    def execute(self, reference: str, category: str, comments: str) -> None:        
+    def execute(self, reference: str, category: str, month: int, tag: str, comments: str) -> None:        
         result: InteractorResultDto = None
         operation = 'Update Transaction'
+        
+        try:
+            transaction = self.history.get_transaction(reference)
+        except TransactionNotFoundException as e:
+            result = InteractorResultDto(success=False, operation=operation, error=str(e))
+
+        if result is None:
+            transaction.category = category
+            transaction.comments = comments
+
+            try:
+                response = self.history.update_transaction(transaction)
+                result = InteractorResultDto(success=True, operation=operation, data=response.to_dict())
+            except (TransactionNotFoundException, TransactionUpdateException) as e:
+                result = InteractorResultDto(success=False, operation=operation, error=str(e))
+    
+        self.presenter.present_transaction(result)
+    
+
+class IgnoreTransactionUseCase:
+
+    def __init__(self, history: History, presenter: HistoryPresenterInterface) -> None:
+        self.history = history
+        self.presenter = presenter
+
+    def execute(self, reference: str, ignore: bool) -> None:        
+        result: InteractorResultDto = None
+        operation = 'Ignore Transaction'
         
         try:
             transaction = self.history.get_transaction(reference)
@@ -80,24 +125,6 @@ class DeleteTransactionUseCase:
             result = InteractorResultDto(success=False, operation=operation, error=str(e))
 
         self.presenter.present_transaction(result)
-
-
-class GetUnreviewedTransactionsUseCase:
-
-    def __init__(self, history: History, presenter: HistoryPresenterInterface) -> None:
-        self.history = history
-        self.presenter = presenter
-
-    def execute(self) -> List[TransactionDto]:
-        result: InteractorResultDto = None
-        operation = 'Review Transactions'
-        transactions = self.history.get_unreviewed_transactions()
-        response = [TransactionDto.from_dict(item.to_dict()) for item in transactions]
-
-        result = InteractorResultDto(success=True, operation=operation, data=response)
-        self.presenter.present_review_transactions(result)
-        return response
-
 
 
 class SaveHistoryUseCase:

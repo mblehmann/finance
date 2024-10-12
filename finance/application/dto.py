@@ -62,9 +62,9 @@ class TransactionDto:
             notes=data['notes'],
             category=data['category'],
             month=str(data['month']),
-            comments=data['comments'],
             tag=data['tag'],
-            exclude=str(data['exclude']),
+            comments=data['comments'],
+            ignore=str(data['ignore']),
         )
 
     def to_dict(self) -> Dict[str, str]:
@@ -76,8 +76,8 @@ class TransactionDto:
             'notes': self.notes,
             'category': self.category,
             'month': self.month,
-            'comments': self.comments,
             'tag': self.tag,
-            'exclude': self.exclude,
+            'comments': self.comments,
+            'ignore': self.ignore,
         }
     
