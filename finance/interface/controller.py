@@ -49,7 +49,10 @@ class HistoryControllerInterface(Protocol):
     def review_transactions(self) -> None:
         ...
 
-    def update_transaction(self, reference: str, category: str, comments: str) -> None:
+    def update_transaction(self, reference: str, **kwargs) -> None:
+        ...
+
+    def ignore_transaction(self, reference: str, ignore: bool) -> None:
         ...
 
     def delete_transaction(self, reference: str) -> None:

@@ -11,11 +11,11 @@ class BudgetCmd(cmd.Cmd):
         super().__init__()
         self.budget_controller = budget_controller
 
-    def do_add_item(self, args: str) -> None:
-        """add_item <name> <amount> <category> <note>: Adds a new budget item with name, amount, category, and note"""
+    def do_add(self, args: str) -> None:
+        """add <name> <amount> <category> <note>: Adds a new budget item with name, amount, category, and note"""
         parameters = args.split()
         if len(parameters) < 4:
-            self.do_help('add_item')
+            self.do_help('add')
             return
         
         name, amount, category = parameters[:3]
@@ -28,11 +28,11 @@ class BudgetCmd(cmd.Cmd):
         
         self.budget_controller.add_budget_item(name, amount, category, note)
 
-    def do_update_item(self, args: str) -> None:
-        """update_item <identifier> <name> <amount> <category> <note>: Updates the budget item (name, amount, category, and note) with given identifier"""
+    def do_update(self, args: str) -> None:
+        """update <identifier> <name> <amount> <category> <note>: Updates the budget item (name, amount, category, and note) with given identifier"""
         parameters = args.split()
         if len(parameters) < 5:
-            self.do_help('update_item')
+            self.do_help('update')
             return
         
         identifier, name, amount, category = parameters[:4]
@@ -51,11 +51,11 @@ class BudgetCmd(cmd.Cmd):
         fields = {'name': name, 'amount': amount, 'category': category, 'note': note}
         self.budget_controller.update_budget_item(identifier, **fields)
 
-    def do_update_item_name(self, args: str) -> None:
-        """update_item_name <identifier> <name>: Updates the budget item name with given identifier"""
+    def do_update_name(self, args: str) -> None:
+        """update_name <identifier> <name>: Updates the budget item name with given identifier"""
         parameters = args.split()
         if len(parameters) < 2:
-            self.do_help('update_item_name')
+            self.do_help('update_name')
             return
         
         identifier, name = parameters[:2]
@@ -68,11 +68,11 @@ class BudgetCmd(cmd.Cmd):
         fields = {'name': name}
         self.budget_controller.update_budget_item(identifier, **fields)
 
-    def do_update_item_amount(self, args: str) -> None:
-        """update_item_amount <identifier> <amount>: Updates the budget item amount with given identifier"""
+    def do_update_amount(self, args: str) -> None:
+        """update_amount <identifier> <amount>: Updates the budget item amount with given identifier"""
         parameters = args.split()
         if len(parameters) < 2:
-            self.do_help('update_item_amount')
+            self.do_help('update_amount')
             return
         
         identifier, amount = parameters[:2]
@@ -90,8 +90,8 @@ class BudgetCmd(cmd.Cmd):
         fields = {'amount': amount}
         self.budget_controller.update_budget_item(identifier, **fields)
 
-    def do_update_item_category(self, args: str) -> None:
-        """update_item_category <identifier> <category>: Updates the budget item category with given identifier"""
+    def do_update_category(self, args: str) -> None:
+        """update_category <identifier> <category>: Updates the budget item category with given identifier"""
         parameters = args.split()
         if len(parameters) < 2:
             self.do_help('update_item_category')
@@ -107,8 +107,8 @@ class BudgetCmd(cmd.Cmd):
         fields = {'category': category}
         self.budget_controller.update_budget_item(identifier, **fields)
 
-    def do_update_item_note(self, args: str) -> None:
-        """update_item_note <identifier> <note>: Updates the budget item note with given identifier"""
+    def do_update_note(self, args: str) -> None:
+        """update_note <identifier> <note>: Updates the budget item note with given identifier"""
         parameters = args.split()
         if len(parameters) < 2:
             self.do_help('update_item_note')
@@ -125,21 +125,21 @@ class BudgetCmd(cmd.Cmd):
         fields = {'note': note}
         self.budget_controller.update_budget_item(identifier, **fields)
 
-    def do_get_items(self, args: str) -> None:
-        """get_items <category>: Gets the budget items with given category"""
+    def do_get(self, args: str) -> None:
+        """get <category>: Gets the budget items with given category"""
         parameters = args.split()
         if len(parameters) < 1:
-            self.do_help('get_items')
+            self.do_help('get')
             return
         
         category = parameters[0]
         self.budget_controller.get_budget_items(category)
 
-    def do_delete_item(self, args: str) -> None:
-        """delete_item <identifier>: Deletes the budget item with given identifier"""
+    def do_delete(self, args: str) -> None:
+        """delete <identifier>: Deletes the budget item with given identifier"""
         parameters = args.split()
         if len(parameters) < 1:
-            self.do_help('delete_item')
+            self.do_help('delete')
             return
         
         identifier = parameters[0]
@@ -196,39 +196,45 @@ class HistoryCmd(cmd.Cmd):
         super().__init__()
         self.history_controller = history_controller
 
-    def do_import_transactions(self, args: str) -> None:
-        """import_transactions <filename>: Imports the transactions in the file"""
+    def do_import(self, args: str) -> None:
+        """import <filename>: Imports the transactions in the file"""
         parameters = args.split()
         if len(parameters) < 1:
-            self.do_help('import_transactions')
+            self.do_help('import')
             return
         
         filename = parameters[0]
         self.history_controller.import_transactions(filename)
 
-    def do_update_transaction(self, args: str) -> None:
-        """update_transaction <reference> <category> <comments>: Updates the transaction (category, comments) with given reference"""
+    def do_update(self, args: str) -> None:
+        """update <reference> <category> <month> <tag> <comments>: Updates the transaction (category, month, tag, comments) with given reference"""
         parameters = args.split()
-        if len(parameters) < 3:
-            self.do_help('update_transaction')
+        if len(parameters) < 5:
+            self.do_help('update')
             return
         
-        reference, category = parameters[:2]
-        comments = ' '.join(parameters[2:])
-        self.history_controller.update_transaction(reference, category, comments)
+        reference, category, month, tag = parameters[:4]
+        comments = ' '.join(parameters[4:])
+        try:
+            month = int(month)
+        except ValueError as e:
+            print(f'The month should be a number. {str(e)}')
+            return
 
-    def do_delete_transaction(self, args: str) -> None:
-        """delete_transaction <reference>: Deletes the transaction with given reference"""
+        self.history_controller.update_transaction(reference, category, month, tag, comments)
+
+    def do_delete(self, args: str) -> None:
+        """delete <reference>: Deletes the transaction with given reference"""
         parameters = args.split()
         if len(parameters) < 1:
-            self.do_help('delete_transaction')
+            self.do_help('delete')
             return
         
         reference = parameters[0]
         self.history_controller.delete_transaction(reference)
 
-    def do_review_transactions(self, _: str) -> None:
-        """review_transactions: Reviews the uncategorized transactions"""
+    def do_review(self, _: str) -> None:
+        """review: Reviews the uncategorized transactions"""
         self.history_controller.review_transactions()
 
     def do_save(self, args: str) -> None:

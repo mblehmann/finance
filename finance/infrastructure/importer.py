@@ -22,7 +22,7 @@ class ErsteBankCsvTransactionImporter(TransactionImporterInterface):
                 month = day.month
                 comments = ''
                 tag = ''
-                exclude = False
+                ignore = False
                 item = TransactionDto(
                     reference,
                     day.isoformat(),
@@ -31,9 +31,9 @@ class ErsteBankCsvTransactionImporter(TransactionImporterInterface):
                     notes,
                     category,
                     str(month),
-                    comments,
                     tag,
-                    str(exclude)
+                    comments,
+                    str(ignore)
                 )
                 transactions.append(item)
         return transactions
