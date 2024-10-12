@@ -112,7 +112,7 @@ class TestBudgetItem(unittest.TestCase):
 
 
 class TestBudget(unittest.TestCase):
-    
+
     def setUp(self):
         self.budget = Budget()
 
@@ -178,14 +178,15 @@ class TestBudget(unittest.TestCase):
 
     def test_get_budget_item_by_name(self):
         name = 'item'
-        budget_item = Mock(identifier=uuid4(), name=name)
+        budget_item = Mock(identifier=uuid4())
+        budget_item.name = name
         self.budget.add_budget_item(budget_item)
 
         item = self.budget.get_budget_item_by_name(name)
 
         self.assertEqual(item, budget_item)
         
-    def test_get_budget_item_by_name(self):
+    def test_get_non_existing_budget_item_by_name_raises_exception(self):
         name = 'item'
         with self.assertRaises(BudgetItemNotFoundException):
             self.budget.get_budget_item_by_name(name)
