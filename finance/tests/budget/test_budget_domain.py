@@ -112,67 +112,110 @@ class TestBudgetItem(unittest.TestCase):
 
 
 class TestBudget(unittest.TestCase):
+    
     def setUp(self):
         self.budget = Budget()
 
     def test_add_budget_item(self):
-        mock_budget_item = Mock(identifier=uuid4())
-        self.assertIsNotNone(self.budget.add_budget_item(mock_budget_item))
-        self.assertEqual(len(self.budget.items), 1)
+        budget_item = Mock(identifier=uuid4())
 
-        # Adding the same item again should raise BudgetItemExistsException
+        item = self.budget.add_budget_item(budget_item)
+
+        self.assertEqual(item, budget_item)
+        self.assertEqual(len(self.budget.items), 1)
+        self.assertIn(budget_item.identifier, self.budget.items)
+
+    def test_add_existing_budget_item_raises_exception(self):
+        budget_item = Mock(identifier=uuid4())
+        self.budget.add_budget_item(budget_item)
+
         with self.assertRaises(BudgetItemExistsException):
-            self.budget.add_budget_item(mock_budget_item)
+            self.budget.add_budget_item(budget_item)
 
     def test_update_budget_item(self):
-        mock_budget_item = Mock(identifier=uuid4())
-        self.budget.items[mock_budget_item.identifier] = mock_budget_item
+        budget_item = Mock(identifier=uuid4())
+        updated_budget_item = Mock(identifier=budget_item.identifier)
+        self.budget.add_budget_item(budget_item)
 
-        updated_mock_budget_item = Mock(identifier=mock_budget_item.identifier)
-        self.assertIsNotNone(self.budget.update_budget_item(updated_mock_budget_item))
-        self.assertEqual(self.budget.items[mock_budget_item.identifier], updated_mock_budget_item)
+        item = self.budget.update_budget_item(updated_budget_item)
 
-        # Updating a non-existing item should raise BudgetItemNotFoundException
-        non_existing_mock_budget_item = Mock(identifier=uuid4())
+        self.assertEqual(item, updated_budget_item)
+        self.assertEqual(len(self.budget.items), 1)
+        self.assertIn(updated_budget_item.identifier, self.budget.items)
+
+    def test_update_non_existing_item_raises_exception(self):
+        non_existing_budget_item = Mock(identifier=uuid4())
         with self.assertRaises(BudgetItemNotFoundException):
-            self.budget.update_budget_item(non_existing_mock_budget_item)
+            self.budget.update_budget_item(non_existing_budget_item)
 
     def test_delete_budget_item(self):
-        mock_budget_item = Mock(identifier=uuid4())
-        self.budget.items[mock_budget_item.identifier] = mock_budget_item
+        budget_item = Mock(identifier=uuid4())
+        self.budget.add_budget_item(budget_item)
 
-        self.assertEqual(self.budget.delete_budget_item(mock_budget_item.identifier), mock_budget_item)
-        self.assertNotIn(mock_budget_item.identifier, self.budget.items)
+        item = self.budget.delete_budget_item(budget_item.identifier)
 
-        # Deleting a non-existing item should raise BudgetItemNotFoundException
+        self.assertEqual(item, budget_item)
+        self.assertEqual(len(self.budget.items), 0)
+        self.assertNotIn(budget_item.identifier, self.budget.items)
+
+    def test_delete_non_existing_item_raises_exception(self):
+        non_existing_budget_item = Mock(identifier=uuid4())
         with self.assertRaises(BudgetItemNotFoundException):
-            self.budget.delete_budget_item(uuid4())
+            self.budget.delete_budget_item(non_existing_budget_item.identifier)
 
     def test_get_budget_item(self):
-        mock_budget_item = Mock(identifier=uuid4())
-        self.budget.items[mock_budget_item.identifier] = mock_budget_item
+        budget_item = Mock(identifier=uuid4())
+        self.budget.add_budget_item(budget_item)
 
-        self.assertEqual(self.budget.get_budget_item(mock_budget_item.identifier), mock_budget_item)
-        # Getting a non-existing item should raise BudgetItemNotFoundException
+        item = self.budget.get_budget_item(budget_item.identifier)
+
+        self.assertEqual(item, budget_item)
+
+    def test_get_non_existing_item_raises_exception(self):
+        non_existing_budget_item = Mock(identifier=uuid4())
         with self.assertRaises(BudgetItemNotFoundException):
-            self.budget.get_budget_item(uuid4())
+            self.budget.get_budget_item(non_existing_budget_item.identifier)
+
+    def test_get_budget_item_by_name(self):
+        name = 'item'
+        budget_item = Mock(identifier=uuid4(), name=name)
+        self.budget.add_budget_item(budget_item)
+
+        item = self.budget.get_budget_item_by_name(name)
+
+        self.assertEqual(item, budget_item)
+        
+    def test_get_budget_item_by_name(self):
+        name = 'item'
+        with self.assertRaises(BudgetItemNotFoundException):
+            self.budget.get_budget_item_by_name(name)
 
     def test_get_budget_item_by_category(self):
-        mock_budget_item1 = Mock(category=BudgetCategory.Wants)
-        mock_budget_item2 = Mock(category=BudgetCategory.Needs)
-        self.budget.items[mock_budget_item1.identifier] = mock_budget_item1
-        self.budget.items[mock_budget_item2.identifier] = mock_budget_item2
+        budget_item1 = Mock(identifier=uuid4(), category=BudgetCategory.Needs)
+        budget_item2 = Mock(identifier=uuid4(), category=BudgetCategory.Needs)
+        budget_item3 = Mock(identifier=uuid4(), category=BudgetCategory.Needs)
+        self.budget.add_budget_item(budget_item1)
+        self.budget.add_budget_item(budget_item2)
+        self.budget.add_budget_item(budget_item3)
 
-        self.assertEqual(self.budget.get_budget_item_by_category(BudgetCategory.Wants), [mock_budget_item1])
-        self.assertEqual(self.budget.get_budget_item_by_category(BudgetCategory.Savings), [])
+        items = self.budget.get_budget_item_by_category(BudgetCategory.Needs)
+
+        self.assertEqual(items, [budget_item1, budget_item2, budget_item3])
+
+    def test_get_budget_item_by_category_no_items(self):
+        items = self.budget.get_budget_item_by_category(BudgetCategory.Needs)
+
+        self.assertEqual(items, [])
 
     def test_list_budget_items(self):
-        mock_budget_item1 = Mock()
-        mock_budget_item2 = Mock()
-        self.budget.items[mock_budget_item1.identifier] = mock_budget_item1
-        self.budget.items[mock_budget_item2.identifier] = mock_budget_item2
+        budget_item1 = Mock(identifier=uuid4())
+        budget_item2 = Mock(identifier=uuid4())
+        budget_item3 = Mock(identifier=uuid4())
+        self.budget.add_budget_item(budget_item1)
+        self.budget.add_budget_item(budget_item2)
+        self.budget.add_budget_item(budget_item3)
 
-        self.assertEqual(self.budget.list_budget_items(), [mock_budget_item1, mock_budget_item2])
+        self.assertEqual(self.budget.list_budget_items(), [budget_item1, budget_item2, budget_item3])
 
 
 if __name__ == '__main__':
