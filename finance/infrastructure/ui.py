@@ -231,6 +231,31 @@ class HistoryCmd(cmd.Cmd):
         """review_transactions: Reviews the uncategorized transactions"""
         self.history_controller.review_transactions()
 
+    def do_save(self, args: str) -> None:
+        """save <name>: Saves the history with the given project name"""
+        parameters = args.split()
+        if len(parameters) < 1:
+            self.do_help('save')
+            return
+
+        project_name = parameters[0]
+        os.makedirs(project_name, exist_ok=True)
+        self.history_controller.save_budget(project_name)
+
+    def do_load(self, args: str) -> None:
+        """load <name>: Loads the history with the given project name"""
+        parameters = args.split()
+        if len(parameters) < 1:
+            self.do_help('load')
+            return
+
+        project_name = parameters[0]
+        self.history_controller.load_budget(project_name)
+    
+    def do_quit(self, _: str) -> bool:
+        """quit: Quits the program"""
+        return True
+
 
 class ReportCmd(cmd.Cmd):
     prompt = 'report> '
@@ -356,7 +381,7 @@ class FinanceCmd(cmd.Cmd):
         project_name = parameters[0]
         os.makedirs(project_name, exist_ok=True)
         self.budget_cmd.do_save(project_name)
-        self.history_controller.save_budget(project_name)
+        self.history_cmd.do_save(project_name)
 
     def do_load(self, args: str) -> None:
         """load <name>: Loads the finance with the given project name"""
@@ -366,8 +391,8 @@ class FinanceCmd(cmd.Cmd):
             return
 
         project_name = parameters[0]
-        self.budget_cmd.do_save(project_name)
-        self.history_controller.load_budget(project_name)
+        self.budget_cmd.do_load(project_name)
+        self.history_cmd.do_load(project_name)
 
     def do_quit(self, _: str) -> bool:
         """quit: Quits the program"""

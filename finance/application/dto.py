@@ -49,6 +49,7 @@ class TransactionDto:
     category: str
     month: str
     comments: str
+    tag: str
     exclude: str
 
     @classmethod
@@ -62,6 +63,7 @@ class TransactionDto:
             category=data['category'],
             month=str(data['month']),
             comments=data['comments'],
+            tag=data['tag'],
             exclude=str(data['exclude']),
         )
 
@@ -75,6 +77,7 @@ class TransactionDto:
             'category': self.category,
             'month': self.month,
             'comments': self.comments,
+            'tag': self.tag,
             'exclude': self.exclude,
         }
     

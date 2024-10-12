@@ -15,11 +15,8 @@ class Transaction:
     category: str = field(compare=False)
     month: int = field(compare=False)
     comments: str = field(compare=False)
+    tag: str = field(compare=False)
     exclude: bool = field(compare=False)
-
-    # @property
-    # def month(self) -> int:
-    #     return self.day.month
 
     @classmethod
     def from_dict(cls, data: Dict[str, str]) -> Self:
@@ -32,6 +29,7 @@ class Transaction:
             category=data['category'],
             month=int(data['month']),
             comments=data['comments'],
+            tag=data['tag'],
             exclude=True if data['exclude'] == 'True' else False,
         )
 
@@ -45,6 +43,7 @@ class Transaction:
             'category': self.category,
             'month': self.month,
             'comments': self.comments,
+            'tag': self.tag,
             'exclude': self.exclude,
         }
 
