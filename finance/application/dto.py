@@ -48,9 +48,9 @@ class TransactionDto:
     notes: str
     category: str
     month: str
-    comments: str
     tag: str
-    exclude: str
+    comments: str
+    ignore: str
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> Self:
