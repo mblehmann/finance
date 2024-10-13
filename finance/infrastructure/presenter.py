@@ -35,8 +35,8 @@ class CmdBudgetPresenter(BudgetPresenterInterface):
             self.present_failure(result)
             return
         
-        item = TableViewModel.from_dict(result.data)
-        self.view.show_dict(f'{result.operation} succeeded', item)
+        table = TableViewModel.from_dict(result.data)
+        self.view.show_table(f'{result.operation} succeeded', table)
 
     def present_success(self, result: InteractorResultDto) -> None:
         message = BudgetErrorViewModel(f'{result.operation} succeeded', result.data)

@@ -20,11 +20,11 @@ class CmdBudgetView(BudgetViewInterface):
         print(budget)
         print()
 
-    def show_dict(self, command: str, item: TableViewModel) -> None:
+    def show_table(self, command: str, data: TableViewModel) -> None:
         print(f'{command}')
         table = PrettyTable()
-        table.field_names = item.field_names
-        for row in item.rows:
+        table.field_names = data.fields
+        for row in data.rows:
             table.add_row(row)
         print(table)
         print()

@@ -57,7 +57,7 @@ class BudgetViewInterface(Protocol):
     def show_list(self, command: str, items: List[BudgetItemViewModel]) -> None:
         ...
     
-    def show_dict(self, command: str, item: TableViewModel) -> None:
+    def show_table(self, command: str, data: TableViewModel) -> None:
         ...
     
     def show_failure(self, error: BudgetErrorViewModel) -> None:
