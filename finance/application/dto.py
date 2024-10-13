@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
-from typing import Any, Dict, Optional, Self
+from typing import Any, Dict, List, Optional, Protocol, Self
 
 
 @dataclass
@@ -80,4 +80,55 @@ class TransactionDto:
             'comments': self.comments,
             'ignore': self.ignore,
         }
+
+
+class CellDto(Protocol):
+
+    @property
+    def value(self) -> str:
+        ...
+
+
+@dataclass
+class StrCellDto(CellDto):
+    data: str
+
+    @property
+    def value(self) -> str:
+        return self.data
+
+
+@dataclass
+class MoneyCellDto(CellDto):
+    amount: float
+    formatting: str = '{:,.2f}'
+
+    @property
+    def value(self) -> str:
+        return self.formatting.format(self.amount)
+
+
+
+@dataclass
+class PercentageCellDto(CellDto):
+    amount: float
+    formatting: str = '{:.2%}'
+
+    @property
+    def value(self) -> str:
+        return self.formatting.format(self.amount)
+
+
+@dataclass
+class TableDto:
+    fields: List[str]
+    rows: List[List[str]] = field(default_factory=list)
     
+    def add_row(self, data: List[CellDto]) -> None:
+        self.rows.append([cell.value for cell in data])
+
+    def to_dict(self) -> Dict[str, List[str] | List[List[str]]]:
+        return {
+            'fields': self.fields,
+            'rows': self.rows
+        }

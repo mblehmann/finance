@@ -4,8 +4,15 @@ from typing import Any, Dict, List, Protocol, Self, Tuple
 
 @dataclass
 class TableViewModel:
-    field_names: List[str]
+    fields: List[str]
     rows: List[List[str]]
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> Self:
+        return cls(
+            fields=data['fields'],
+            rows=data['rows']
+        )
 
 
 @dataclass

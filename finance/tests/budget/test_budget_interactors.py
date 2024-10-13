@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import ANY, Mock, call
 from uuid import uuid4
-from finance.application.dto import BudgetItemDto, InteractorResultDto
+from finance.application.dto import BudgetItemDto, InteractorResultDto, TableDto
 from finance.application.interface import BudgetPresenterInterface
 from finance.domain.budget import Budget, BudgetItem, BudgetCategory
 from finance.application.budget_interactor import (
@@ -243,27 +243,27 @@ class TestBudgetUseCases(unittest.TestCase):
         self.budget.add_budget_item(item5)
         self.budget.add_budget_item(item6)
 
-        category_overview = {
-            'field_names': ['Category', 'Amount'],
-            'rows': [
+        category_overview = TableDto(
+            fields=['Category', 'Amount'],
+            rows=[
                 ['Income', '200.00'],
                 ['Expenses', '1,600.80'],
                 ['Result', '-1,400.80'],
                 ['Unassigned', '300.00']
             ]
-        }
+        )
         overview_result = InteractorResultDto(success=True, operation='Show Budget Overview', data=category_overview)
         
-        category_distribution = {
-            'field_names': ['Category', 'Amount', 'Percentage'],
-            'rows': [
+        category_distribution = TableDto(
+            fields=['Category', 'Amount', 'Percentage'],
+            rows=[
                 ['Empty', '300.00', '-'],
                 ['Income', '200.00', '-'],
                 ['Needs', '100.00', '6.25%'],
                 ['Wants', '1,100.80', '68.77%'],
                 ['Savings', '400.00', '24.99%'],
             ]
-        }
+        )
         distribution_result = InteractorResultDto(success=True, operation='Show Budget Overview', data=category_distribution)
         use_case = ShowBudgetOverviewUseCase(self.budget, self.mock_presenter)
 
@@ -285,35 +285,35 @@ class TestBudgetUseCases(unittest.TestCase):
         self.budget.add_budget_item(item4)
         self.budget.add_budget_item(item5)
 
-        income_distribution = {
-            'field_names': ['category', 'name', 'note', 'amount', 'percentage'],
-            'rows': [
+        income_distribution = TableDto(
+            fields=['category', 'name', 'note', 'amount', 'percentage'],
+            rows=[
                 ['Income', 'Test Item 2', 'Test Note2', '200.77', '100.00%'],
                 ['Income', 'Total', '', '200.77', '100.00%'],
             ]
-        }
-        needs_distribution = {
-            'field_names': ['category', 'name', 'note', 'amount', 'percentage'],
-            'rows': [
+        )
+        needs_distribution = TableDto(
+            fields=['category', 'name', 'note', 'amount', 'percentage'],
+            rows=[
                 ['Needs', 'Test Item 1', 'Test Note1', '100.00', '100.00%'],
                 ['Needs', 'Total', '', '100.00', '100.00%'],
             ]
-        }
-        wants_distribution = {
-            'field_names': ['category', 'name', 'note', 'amount', 'percentage'],
-            'rows': [
+        )
+        wants_distribution = TableDto(
+            fields=['category', 'name', 'note', 'amount', 'percentage'],
+            rows=[
                 ['Wants', 'Test Item 5', 'Test Note5', '1,600.00', '76.19%'],
                 ['Wants', 'Test Item 4', 'Test Note4', '500.00', '23.81%'],
                 ['Wants', 'Total', '', '2,100.00', '100.00%'],
             ]
-        }
-        savings_distribution = {
-            'field_names': ['category', 'name', 'note', 'amount', 'percentage'],
-            'rows': [
+        )
+        savings_distribution = TableDto(
+            fields=['category', 'name', 'note', 'amount', 'percentage'],
+            rows=[
                 ['Savings', 'Test Item 3', 'Test Note3', '0.00', '0.00%'],
                 ['Savings', 'Total', '', '0.00', '100.00%'],
             ]
-        }
+        )
         
         income_result = InteractorResultDto(success=True, operation='Show Budget Distribution - Income', data=income_distribution)
         needs_result = InteractorResultDto(success=True, operation='Show Budget Distribution - Needs', data=needs_distribution)

@@ -2,7 +2,7 @@ import os
 from uuid import UUID, uuid4
 from finance.domain.budget import Budget, BudgetItem, BudgetCategory
 from finance.domain.exception import BudgetCategoryNotFoundException, BudgetItemExistsException, BudgetItemNotFoundException
-from finance.application.dto import BudgetItemDto, InteractorResultDto
+from finance.application.dto import BudgetItemDto, InteractorResultDto, MoneyCellDto, PercentageCellDto, StrCellDto, TableDto
 from finance.application.interface import BudgetPresenterInterface, BudgetRepositoryInterface
 
 
@@ -126,8 +126,9 @@ class ShowBudgetOverviewUseCase:
 
     def execute(self) -> None:
         operation = 'Show Budget Overview'
-        category_overview = {'field_names': ['Category', 'Amount'], 'rows': []}
-        category_distribution = {'field_names': ['Category', 'Amount', 'Percentage'], 'rows': []}
+
+        overview_table = TableDto(['Category', 'Amount'])
+        distribution_table = TableDto(['Category', 'Amount', 'Percentage'])
 
         categories = {}
         for category in BudgetCategory:
@@ -135,22 +136,19 @@ class ShowBudgetOverviewUseCase:
             categories[category.name] = amount
         expenses = categories['Needs'] + categories['Wants'] + categories['Savings']
 
-        rows = []
         for category, amount in categories.items():
-            rows.append([category, '{:,.2f}'.format(amount), '{:.2%}'.format(amount / expenses) if category in ['Needs', 'Wants', 'Savings'] else '-'])
-        category_distribution['rows'] = rows
+            percentage_cell = PercentageCellDto(amount / expenses) if category in ['Needs', 'Wants', 'Savings'] else StrCellDto('-')
+            distribution_table.add_row([StrCellDto(category), MoneyCellDto(amount), percentage_cell])
 
-        category_overview['rows'] = [
-            ['Income', '{:,.2f}'.format(categories['Income'])],
-            ['Expenses', '{:,.2f}'.format(expenses)],
-            ['Result', '{:,.2f}'.format(categories['Income'] - expenses)],
-            ['Unassigned', '{:,.2f}'.format(categories['Empty'])]
-        ]
+        overview_table.add_row([StrCellDto('Income'), MoneyCellDto(categories['Income'])])
+        overview_table.add_row([StrCellDto('Expenses'), MoneyCellDto(expenses)])
+        overview_table.add_row([StrCellDto('Result'), MoneyCellDto(categories['Income'] - expenses)])
+        overview_table.add_row([StrCellDto('Unassigned'), MoneyCellDto(categories['Empty'])])
 
-        overview_result = InteractorResultDto(success=True, operation=operation, data=category_overview)
+        overview_result = InteractorResultDto(success=True, operation=operation, data=overview_table)
         self.presenter.present_budget_table(overview_result)
 
-        distribution_result = InteractorResultDto(success=True, operation=operation, data=category_distribution)
+        distribution_result = InteractorResultDto(success=True, operation=operation, data=distribution_table)
         self.presenter.present_budget_table(distribution_result)
 
 
@@ -167,15 +165,13 @@ class ShowBudgetDistributionUseCase:
         for category, items in distribution.items():
             if not items:
                 continue
-            response = {'field_names': ['category', 'name', 'note', 'amount', 'percentage'], 'rows': []}
+            response = TableDto(['category', 'name', 'note', 'amount', 'percentage'])
             total = sum(item.amount for item in items)
             if not total:
                 total = 0.001
-            rows = []
             for item in sorted(items, key=lambda x: x.amount, reverse=True):
-                rows.append([category, item.name, item.note, '{:,.2f}'.format(item.amount), '{:.2%}'.format(item.amount / total)])
-            rows.append([category, 'Total', '', '{:,.2f}'.format(total), '{:.2%}'.format(total / total)])
-            response['rows'] = rows
+                response.add_row([StrCellDto(category), StrCellDto(item.name), StrCellDto(item.note), MoneyCellDto(item.amount), PercentageCellDto(item.amount / total)])
+            response.add_row([StrCellDto(category), StrCellDto('Total'), StrCellDto(''), MoneyCellDto(total), PercentageCellDto(total / total)])
             result = InteractorResultDto(success=True, operation=f'{operation} - {category}', data=response)
             self.presenter.present_budget_table(result)
 
