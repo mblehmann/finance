@@ -1,0 +1,33 @@
+name: Run Python Unit Tests
+
+# Controls when the workflow runs
+on:
+  push:
+    branches:
+      - main  # Run on pushes to the main branch
+  pull_request:
+    branches:
+      - main  # Run on pull requests to the main branch
+
+jobs:
+  test:
+    # The OS you want to use for running the tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Assumes you have a requirements.txt file
+
+      - name: Run Unit Tests
+        run: |
+          python -m unittest discover -s tests  # Adjust if your tests are in a different folder
