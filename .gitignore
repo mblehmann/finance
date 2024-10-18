@@ -162,7 +162,8 @@ cython_debug/
 #.idea/
 
 *.csv
-*.txt
 *.numbers
 *.drawio
 TODO
+domain.txt
+reports/*

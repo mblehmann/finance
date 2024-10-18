@@ -265,13 +265,14 @@ class TestBudgetUseCases(unittest.TestCase):
             ]
         )
         distribution_result = InteractorResultDto(success=True, operation='Show Budget Overview', data=category_distribution)
+        expected_calls = [call(overview_result), call(distribution_result)]
+
         use_case = ShowBudgetOverviewUseCase(self.budget, self.mock_presenter)
 
         use_case.execute()
 
         self.assertEqual(self.mock_presenter.present_budget_table.call_count, 2)
-        self.assertEqual(self.mock_presenter.present_budget_table.call_args_list[0], call(overview_result))
-        self.assertEqual(self.mock_presenter.present_budget_table.call_args_list[1], call(distribution_result))
+        self.assertEqual(self.mock_presenter.present_budget_table.call_args_list, expected_calls)
 
     def test_show_budget_distribution_use_case(self):
         item1 = BudgetItem(uuid4(), "Test Item 1", 100.0, BudgetCategory.Needs, "Test Note1")
@@ -320,15 +321,14 @@ class TestBudgetUseCases(unittest.TestCase):
         wants_result = InteractorResultDto(success=True, operation='Show Budget Distribution - Wants', data=wants_distribution)
         savings_result = InteractorResultDto(success=True, operation='Show Budget Distribution - Savings', data=savings_distribution)
         
+        expected_calls = [call(income_result), call(needs_result), call(wants_result), call(savings_result)]
+
         use_case = ShowBudgetDistributionUseCase(self.budget, self.mock_presenter)
 
         use_case.execute()
 
         self.assertEqual(self.mock_presenter.present_budget_table.call_count, 4)
-        self.assertEqual(self.mock_presenter.present_budget_table.call_args_list[0], call(income_result))
-        self.assertEqual(self.mock_presenter.present_budget_table.call_args_list[1], call(needs_result))
-        self.assertEqual(self.mock_presenter.present_budget_table.call_args_list[2], call(wants_result))
-        self.assertEqual(self.mock_presenter.present_budget_table.call_args_list[3], call(savings_result))
+        self.assertEqual(self.mock_presenter.present_budget_table.call_args_list, expected_calls)
 
 class TestBudgetPersistenceUseCases(unittest.TestCase):
 

@@ -10,7 +10,7 @@ class CsvBudgetRepository(BudgetRepositoryInterface):
         with open(filename, 'w', newline='') as csv_file:
             csv_write = csv.writer(csv_file)
             for item in budget:
-                csv_write.writerow(item.to_dict().values())
+                csv_write.writerow(list(item.to_dict().values()))
 
     def load_budget(self, filename: str) -> List[BudgetItemDto]:
         budget = []
