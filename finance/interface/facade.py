@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from typing import Self
 
-from application.interface import BudgetPresenterInterface, BudgetRepositoryInterface, HistoryPresenterInterface, HistoryRepositoryInterface, ReportPresenterInterface, TransactionImporterInterface
-from application.report_interactor import AllCategoryReportUseCase, CategoryReportUseCase, MonthResultUseCase
-from application.transaction_interactor import DeleteTransactionUseCase, GetUnreviewedTransactionsUseCase, IgnoreTransactionUseCase, ImportTransactionsUseCase, LoadHistoryUseCase, ReviewTransactionsUseCase, SaveHistoryUseCase, UpdateTransactionUseCase
-from domain.transaction import History
+from finance.application.interface import BudgetPresenterInterface, BudgetRepositoryInterface, HistoryPresenterInterface, HistoryRepositoryInterface, ReportPresenterInterface, TransactionImporterInterface
+from finance.application.report_interactor import AllCategoryReportUseCase, CategoryReportUseCase, MonthResultUseCase
+from finance.application.transaction_interactor import DeleteTransactionUseCase, IgnoreTransactionUseCase, ImportTransactionsUseCase, LoadHistoryUseCase, ReviewTransactionsUseCase, SaveHistoryUseCase, UpdateTransactionUseCase
+from finance.domain.transaction import History
 from finance.domain.budget import Budget
 from finance.application.budget_interactor import (
     AddBudgetItemUseCase,
@@ -34,7 +34,7 @@ class BudgetUseCaseFacade:
 class BudgetUseCaseFacadeFactory:
 
     @classmethod
-    def create_facade(cls, budget: Budget, repository: BudgetRepositoryInterface, presenter: BudgetPresenterInterface) -> Self:
+    def create_facade(cls, budget: Budget, repository: BudgetRepositoryInterface, presenter: BudgetPresenterInterface) -> BudgetUseCaseFacade:
         return BudgetUseCaseFacade(AddBudgetItemUseCase(budget, presenter),
                                    UpdateBudgetItemUseCase(budget, presenter),
                                    DeleteBudgetItemUseCase(budget, presenter),
@@ -61,7 +61,7 @@ class HistoryUseCaseFacade:
 class HistoryUseCaseFacadeFactory:
 
     @classmethod
-    def create_facade(cls, history: History, importer: TransactionImporterInterface, repository: HistoryRepositoryInterface, presenter: HistoryPresenterInterface) -> Self:
+    def create_facade(cls, history: History, importer: TransactionImporterInterface, repository: HistoryRepositoryInterface, presenter: HistoryPresenterInterface) -> HistoryUseCaseFacade:
         return HistoryUseCaseFacade(ImportTransactionsUseCase(history, importer, presenter),
                                     ReviewTransactionsUseCase(history, presenter),
                                     UpdateTransactionUseCase(history, presenter),
@@ -81,7 +81,7 @@ class ReportUseCaseFacade:
 class ReportUseCaseFacadeFactory:
 
     @classmethod
-    def create_facade(cls, history: History, budget: Budget, presenter: ReportPresenterInterface):
+    def create_facade(cls, history: History, budget: Budget, presenter: ReportPresenterInterface) -> ReportUseCaseFacade:
         category_report = CategoryReportUseCase(budget, history, presenter)
         return ReportUseCaseFacade(category_report,
                                    AllCategoryReportUseCase(budget, category_report),

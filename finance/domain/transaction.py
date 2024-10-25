@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from datetime import date
 from typing import Any, Dict, List, Self
 
-from domain.exception import TransactionExistsException, TransactionNotFoundException, TransactionUpdateException
+from finance.domain.exception import TransactionExistsException, TransactionNotFoundException, TransactionUpdateException
 
 
 @dataclass

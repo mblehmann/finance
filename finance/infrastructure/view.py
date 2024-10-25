@@ -1,5 +1,6 @@
 from prettytable import PrettyTable
 from typing import Dict, List
+
 from finance.interface.view import BudgetErrorViewModel, BudgetItemViewModel, BudgetViewInterface, CategoryReportViewModel, HistoryErrorViewModel, HistoryViewInterface, MonthResultViewModel, ReportViewInterface, TableViewModel, TransactionViewModel
 
 

@@ -1,6 +1,7 @@
 from uuid import UUID
-from application.dto import InteractorResultDto
-from application.interface import HistoryPresenterInterface, InputReaderInterface
+
+from finance.application.dto import InteractorResultDto
+from finance.application.interface import HistoryPresenterInterface, InputReaderInterface
 from finance.interface.controller import BudgetControllerInterface, HistoryControllerInterface, ReportControllerInterface
 from finance.interface.facade import BudgetUseCaseFacade, HistoryUseCaseFacade, ReportUseCaseFacade
 

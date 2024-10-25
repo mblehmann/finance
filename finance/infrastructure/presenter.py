@@ -1,4 +1,4 @@
-from domain.report import CategoryReport, MonthResult
+from finance.domain.report import CategoryReport, MonthResult
 from finance.application.dto import InteractorResultDto
 from finance.application.interface import BudgetPresenterInterface, HistoryPresenterInterface, ReportPresenterInterface
 from finance.interface.view import BudgetViewInterface, BudgetItemViewModel, BudgetErrorViewModel, CategoryReportViewModel, HistoryErrorViewModel, HistoryViewInterface, MonthResultViewModel, ReportViewInterface, TableViewModel, TransactionViewModel

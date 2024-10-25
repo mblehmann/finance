@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from domain.budget import Budget
-from domain.transaction import History
+
+from finance.domain.budget import Budget
+from finance.domain.transaction import History
 
 
 @dataclass

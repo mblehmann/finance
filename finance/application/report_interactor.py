@@ -1,9 +1,10 @@
 from typing import Dict, List
-from application.dto import InteractorResultDto
-from application.interface import ReportPresenterInterface
-from domain.budget import Budget, BudgetCategory
-from domain.report import CategoryReport, MonthResult
-from domain.transaction import History, Transaction
+
+from finance.application.dto import InteractorResultDto
+from finance.application.interface import ReportPresenterInterface
+from finance.domain.budget import Budget, BudgetCategory
+from finance.domain.report import CategoryReport, MonthResult
+from finance.domain.transaction import History, Transaction
 
 
 class CategoryReportUseCase:

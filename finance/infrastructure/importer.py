@@ -1,8 +1,9 @@
 import csv
 from datetime import datetime
 from typing import List
-from application.dto import TransactionDto
-from application.interface import TransactionImporterInterface
+
+from finance.application.dto import TransactionDto
+from finance.application.interface import TransactionImporterInterface
 
 
 class ErsteBankCsvTransactionImporter(TransactionImporterInterface):

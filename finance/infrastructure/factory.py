@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from domain.transaction import History
+from finance.domain.transaction import History
 from finance.domain.budget import Budget
 from finance.application.interface import BudgetRepositoryInterface, HistoryRepositoryInterface
 from finance.interface.facade import BudgetUseCaseFacadeFactory, HistoryUseCaseFacadeFactory, ReportUseCaseFacadeFactory
@@ -8,8 +8,8 @@ from finance.interface.controller import BudgetControllerInterface, HistoryContr
 from finance.infrastructure.presenter import CmdBudgetPresenter, CmdHistoryPresenter, CmdReportPresenter
 from finance.infrastructure.view import CmdBudgetView, CmdHistoryView, CmdReportView
 from finance.infrastructure.controller import CmdBudgetController, CmdHistoryController, CmdReportController
-from infrastructure.importer import ErsteBankCsvTransactionImporter
-from infrastructure.reader import CmdInputReader
+from finance.infrastructure.importer import ErsteBankCsvTransactionImporter
+from finance.infrastructure.reader import CmdInputReader
 
 
 class AbstractComponentFactory(Protocol):

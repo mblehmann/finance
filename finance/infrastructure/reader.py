@@ -1,4 +1,4 @@
-from application.interface import InputReaderInterface
+from finance.application.interface import InputReaderInterface
 
 
 class CmdInputReader(InputReaderInterface):

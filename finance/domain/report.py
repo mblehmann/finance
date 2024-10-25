@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
-from domain.budget import BudgetCategory
-from domain.transaction import Transaction
+from finance.domain.budget import BudgetCategory
+from finance.domain.transaction import Transaction
 
 
 @dataclass
