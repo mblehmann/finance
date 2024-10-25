@@ -5,7 +5,7 @@ from finance.application.dto import BudgetItemDto
 from finance.infrastructure.repository import CsvBudgetRepository
 
 
-class TestBudgetItem(unittest.TestCase):
+class TestCsvBudgetRepository(unittest.TestCase):
 
     def setUp(self) -> None:
         self.repository = CsvBudgetRepository()

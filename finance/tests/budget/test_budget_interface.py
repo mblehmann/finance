@@ -1,5 +1,5 @@
 import unittest
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from finance.application.budget_interactor import AddBudgetItemUseCase, DeleteBudgetItemUseCase, GetBudgetItemByCategoryUseCase, ListBudgetItemsUseCase, LoadBudgetUseCase, SaveBudgetUseCase, ShowBudgetDistributionUseCase, ShowBudgetOverviewUseCase, UpdateBudgetItemUseCase
 from finance.interface.facade import BudgetUseCaseFacadeFactory
@@ -42,7 +42,6 @@ class TestBudgetItemViewModel(unittest.TestCase):
         self.assertEqual(amount, item.amount)
         self.assertEqual(category, item.category)
         self.assertEqual(note, item.note)
-
 
     def test_budget_item_to_dict(self):
         identifier = 'identifier'

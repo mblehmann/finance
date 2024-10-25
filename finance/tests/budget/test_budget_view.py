@@ -6,7 +6,7 @@ from finance.infrastructure.view import CmdBudgetView
 from finance.interface.view import BudgetErrorViewModel, BudgetItemViewModel, TableViewModel
 
 
-class TestBudgetItem(unittest.TestCase):
+class TestCmdBudgetView(unittest.TestCase):
 
     def setUp(self) -> None:
         self.view = CmdBudgetView()
