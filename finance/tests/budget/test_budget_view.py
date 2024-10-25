@@ -2,8 +2,8 @@ from io import StringIO
 import unittest
 from unittest.mock import patch
 
-from infrastructure.view import CmdBudgetView
-from interface.view import BudgetErrorViewModel, BudgetItemViewModel, TableViewModel
+from finance.infrastructure.view import CmdBudgetView
+from finance.interface.view import BudgetErrorViewModel, BudgetItemViewModel, TableViewModel
 
 
 class TestBudgetItem(unittest.TestCase):
