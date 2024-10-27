@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import ANY, Mock, call
+from unittest.mock import ANY, Mock, call, patch
 from uuid import uuid4
 
 from finance.application.dto import BudgetItemDto, InteractorResultDto, TableDto
@@ -84,6 +84,7 @@ class TestBudgetUseCases(unittest.TestCase):
         
         use_case.execute(name, amount, category, note)
 
+        self.assertEqual(1, len(self.budget.items))
         self.mock_presenter.present_budget_item.assert_called_once_with(result)
 
     def test_add_budget_item_invalid_category_returns_error(self):
@@ -98,6 +99,7 @@ class TestBudgetUseCases(unittest.TestCase):
         
         use_case.execute(name, amount, category, note)
 
+        self.assertEqual(0, len(self.budget.items))
         self.mock_presenter.present_budget_item.assert_called_once_with(result)
 
     def test_update_budget_item(self):
@@ -125,9 +127,14 @@ class TestBudgetUseCases(unittest.TestCase):
 
                 use_case.execute(identifier, **update)
 
+                for key, value in update.items():
+                    if key == 'category':
+                        value = BudgetCategory[value]
+                    self.assertEqual(value, self.budget.items[identifier].__getattribute__(key))
                 self.mock_presenter.present_budget_item.assert_called_once_with(result)
 
-    def test_update_budget_item_invalid_category_returns_error(self):
+    @patch.object(Budget, 'update_budget_item')
+    def test_update_budget_item_invalid_category_returns_error(self, mock_update_budget_item):
         category = 'Abc'
         update = {'category': category}
         error = f'"{category}" is not a valid budget category. The valid categories are: {[member.name for member in BudgetCategory]}'
@@ -137,6 +144,7 @@ class TestBudgetUseCases(unittest.TestCase):
 
         use_case.execute(uuid4(), **update)
 
+        mock_update_budget_item.assert_not_called()
         self.mock_presenter.present_budget_item.assert_called_once_with(result)
 
     def test_update_non_existing_budget_item_returns_error(self):
@@ -149,6 +157,7 @@ class TestBudgetUseCases(unittest.TestCase):
 
         use_case.execute(identifier, **update)
 
+        self.assertNotIn(identifier, self.budget.items)
         self.mock_presenter.present_budget_item.assert_called_once_with(result)
 
     def test_delete_budget_item_use_case(self):
@@ -162,6 +171,7 @@ class TestBudgetUseCases(unittest.TestCase):
 
         use_case.execute(identifier)
 
+        self.assertNotIn(identifier, self.budget.items)
         self.mock_presenter.present_budget_item.assert_called_once_with(result)
 
     def test_delete_nonexistent_budget_item_use_case(self):
@@ -173,6 +183,7 @@ class TestBudgetUseCases(unittest.TestCase):
 
         use_case.execute(identifier)
 
+        self.assertNotIn(identifier, self.budget.items)
         self.mock_presenter.present_budget_item.assert_called_once_with(result)
 
     def test_get_budget_item_use_case(self):
@@ -368,6 +379,7 @@ class TestBudgetPersistenceUseCases(unittest.TestCase):
 
         use_case.execute(project)
         
+        self.assertEqual(2, len(self.budget.items))
         self.mock_repository.load_budget.assert_called_once_with(filename)
         self.mock_presenter.present_success.assert_called_once_with(result)
 

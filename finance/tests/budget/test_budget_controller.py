@@ -89,6 +89,5 @@ class TestCmdBudgetController(unittest.TestCase):
         self.mock_facade.load_use_case.execute.assert_called_once_with(project_name)
 
 
-
 if __name__ == '__main__':
     unittest.main()
