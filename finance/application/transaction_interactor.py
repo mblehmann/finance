@@ -20,7 +20,6 @@ class ImportTransactionsUseCase:
         try:
             transaction_dto_list = self.importer.import_transactions(filename)
         except Exception as e:
-            print('exception')
             result = InteractorResultDto(success=False, operation=operation, error=str(e))
 
         response = {'imported': [], 'duplicated': []}
