@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import Mock
 from uuid import uuid4
 
-from application.budget_interactor import AddBudgetItemUseCase, DeleteBudgetItemUseCase, GetBudgetItemByCategoryUseCase, ListBudgetItemsUseCase, LoadBudgetUseCase, SaveBudgetUseCase, ShowBudgetDistributionUseCase, ShowBudgetOverviewUseCase, UpdateBudgetItemUseCase
+from finance.application.budget_interactor import AddBudgetItemUseCase, DeleteBudgetItemUseCase, GetBudgetItemByCategoryUseCase, ListBudgetItemsUseCase, LoadBudgetUseCase, SaveBudgetUseCase, ShowBudgetDistributionUseCase, ShowBudgetOverviewUseCase, UpdateBudgetItemUseCase
 from finance.infrastructure.controller import CmdBudgetController
 from finance.interface.facade import BudgetUseCaseFacade
 

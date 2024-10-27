@@ -2,8 +2,8 @@ import unittest
 from unittest.mock import Mock, patch
 from uuid import uuid4
 
-from infrastructure.ui import BudgetCmd
-from interface.controller import BudgetControllerInterface
+from finance.infrastructure.ui import BudgetCmd
+from finance.interface.controller import BudgetControllerInterface
 
 
 class TestBudgetCmd(unittest.TestCase):
