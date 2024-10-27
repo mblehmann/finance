@@ -95,7 +95,7 @@ class BudgetCmd(cmd.Cmd):
         """update_category <identifier> <category>: Updates the budget item category with given identifier"""
         parameters = args.split()
         if len(parameters) < 2:
-            self.do_help('update_item_category')
+            self.do_help('update_category')
             return
         
         identifier, category = parameters[:2]
@@ -112,7 +112,7 @@ class BudgetCmd(cmd.Cmd):
         """update_note <identifier> <note>: Updates the budget item note with given identifier"""
         parameters = args.split()
         if len(parameters) < 2:
-            self.do_help('update_item_note')
+            self.do_help('update_note')
             return
         
         identifier = parameters[0]
