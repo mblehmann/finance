@@ -93,6 +93,140 @@ class TestHistoryCmd(unittest.TestCase):
 
         mock_print.assert_called_once_with('The month should be a number. invalid literal for int() with base 10: \'august\'')
 
+    def test_update_category_success(self):
+        reference = 'reference'
+        category = 'category'
+        args = f'{reference} {category}'
+        fields = {'category': category}
+
+        self.ui.do_update_category(args)
+
+        self.mock_controller.update_transaction.assert_called_once_with(reference, **fields)
+
+    def test_update_category_more_than_two_parameters_success(self):
+        reference = 'reference'
+        category = 'category'
+        trailer = 'and other words'
+        args = f'{reference} {category} {trailer}'
+        fields = {'category': category}
+
+        self.ui.do_update_category(args)
+
+        self.mock_controller.update_transaction.assert_called_once_with(reference, **fields)
+
+    @patch.object(HistoryCmd, 'do_help')
+    def test_update_category_less_than_two_parameters_fails(self, mock_do_help):
+        reference = 'reference'
+        category = ''
+        args = f'{reference} {category}'
+
+        self.ui.do_update_category(args)
+
+        mock_do_help.assert_called_once_with('update_category')
+
+    def test_update_month_success(self):
+        reference = 'reference'
+        month = 8
+        args = f'{reference} {month}'
+        fields = {'month': month}
+
+        self.ui.do_update_month(args)
+
+        self.mock_controller.update_transaction.assert_called_once_with(reference, **fields)
+
+    def test_update_month_more_than_two_parameters_success(self):
+        reference = 'reference'
+        month = 8
+        trailer = 'and other words'
+        args = f'{reference} {month} {trailer}'
+        fields = {'month': month}
+
+        self.ui.do_update_month(args)
+
+        self.mock_controller.update_transaction.assert_called_once_with(reference, **fields)
+
+    @patch.object(HistoryCmd, 'do_help')
+    def test_update_month_less_than_two_parameters_fails(self, mock_do_help):
+        reference = 'reference'
+        month = ''
+        args = f'{reference} {month}'
+
+        self.ui.do_update_month(args)
+
+        mock_do_help.assert_called_once_with('update_month')
+
+    @patch('builtins.print')
+    def test_update_month_month_invalid_fails(self, mock_print):
+        reference = 'reference'
+        month = 'august'
+        args = f'{reference} {month}'
+
+        self.ui.do_update_month(args)
+
+        mock_print.assert_called_once_with('The month should be a number. invalid literal for int() with base 10: \'august\'')
+
+    def test_update_tag_success(self):
+        reference = 'reference'
+        tag = 'tag'
+        args = f'{reference} {tag}'
+        fields = {'tag': tag}
+
+        self.ui.do_update_tag(args)
+
+        self.mock_controller.update_transaction.assert_called_once_with(reference, **fields)
+
+    def test_update_tag_more_than_two_parameters_success(self):
+        reference = 'reference'
+        tag = 'tag'
+        trailer = 'and other words'
+        args = f'{reference} {tag} {trailer}'
+        fields = {'tag': tag}
+
+        self.ui.do_update_tag(args)
+
+        self.mock_controller.update_transaction.assert_called_once_with(reference, **fields)
+
+    @patch.object(HistoryCmd, 'do_help')
+    def test_update_tag_less_than_two_parameters_fails(self, mock_do_help):
+        reference = 'reference'
+        tag = ''
+        args = f'{reference} {tag}'
+
+        self.ui.do_update_tag(args)
+
+        mock_do_help.assert_called_once_with('update_tag')
+
+    def test_update_comments_success(self):
+        reference = 'reference'
+        comments = 'comments'
+        args = f'{reference} {comments}'
+        fields = {'comments': comments}
+
+        self.ui.do_update_comments(args)
+
+        self.mock_controller.update_transaction.assert_called_once_with(reference, **fields)
+    
+    def test_update_comments_more_than_two_parameters_success(self):
+        reference = 'reference'
+        comments = 'comments'
+        trailer = 'and other words'
+        args = f'{reference} {comments} {trailer}'
+        fields = {'comments': f'{comments} {trailer}'}
+
+        self.ui.do_update_comments(args)
+
+        self.mock_controller.update_transaction.assert_called_once_with(reference, **fields)
+
+    @patch.object(HistoryCmd, 'do_help')
+    def test_update_comments_less_than_two_parameters_fails(self, mock_do_help):
+        reference = 'reference'
+        comments = ''
+        args = f'{reference} {comments}'
+
+        self.ui.do_update_comments(args)
+
+        mock_do_help.assert_called_once_with('update_comments')
+
 
 if __name__ == '__main__':
     unittest.main()

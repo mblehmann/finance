@@ -225,10 +225,59 @@ class HistoryCmd(cmd.Cmd):
         fields = {'category': category, 'month': month, 'tag': tag, 'comments': comments}
         self.history_controller.update_transaction(reference, **fields)
 
-    # do_update_category
-    # do_update_month
-    # do_update_tag
-    # do_update_comments
+    def do_update_category(self, args: str) -> None:
+        """update_category <reference> <category>: Updates the transaction category with given reference"""
+        parameters = args.split()
+        if len(parameters) < 2:
+            self.do_help('update_category')
+            return
+        
+        reference, category = parameters[:2]
+
+        fields = {'category': category}
+        self.history_controller.update_transaction(reference, **fields)
+
+    def do_update_month(self, args: str) -> None:
+        """update_month <reference> <month>: Updates the transaction month with given reference"""
+        parameters = args.split()
+        if len(parameters) < 2:
+            self.do_help('update_month')
+            return
+        
+        reference, month = parameters[:2]
+        try:
+            month = int(month)
+        except ValueError as e:
+            print(f'The month should be a number. {str(e)}')
+            return
+
+        fields = {'month': month}
+        self.history_controller.update_transaction(reference, **fields)
+        
+    def do_update_tag(self, args: str) -> None:
+        """update_tag <reference> <tag>: Updates the transaction tag with given reference"""
+        parameters = args.split()
+        if len(parameters) < 2:
+            self.do_help('update_tag')
+            return
+        
+        reference, tag = parameters[:2]
+
+        fields = {'tag': tag}
+        self.history_controller.update_transaction(reference, **fields)
+
+    def do_update_comments(self, args: str) -> None:
+        """update_comments <reference> <comments>: Updates the transaction comments with given reference"""
+        parameters = args.split()
+        if len(parameters) < 2:
+            self.do_help('update_comments')
+            return
+        
+        reference = parameters[0]
+        comments = ' '.join(parameters[1:])
+
+        fields = {'comments': comments}
+        self.history_controller.update_transaction(reference, **fields)
 
     # do_exclude True/False
 

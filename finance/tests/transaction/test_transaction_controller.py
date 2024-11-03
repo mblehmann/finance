@@ -38,5 +38,41 @@ class TestCmdBudgetController(unittest.TestCase):
         self.mock_facade.update_use_case.execute.assert_called_once_with(reference, **data)
 
 
+    def test_update_category_transaction(self):
+        reference = 'reference'
+        data = {'category': 'category'}
+
+        self.controller.update_transaction(reference, **data)
+
+        self.mock_facade.update_use_case.execute.assert_called_once_with(reference, **data)
+
+
+    def test_update_month_transaction(self):
+        reference = 'reference'
+        data = {'month': 8}
+
+        self.controller.update_transaction(reference, **data)
+
+        self.mock_facade.update_use_case.execute.assert_called_once_with(reference, **data)
+
+
+    def test_update_tag_transaction(self):
+        reference = 'reference'
+        data = {'tag': 'tag'}
+
+        self.controller.update_transaction(reference, **data)
+
+        self.mock_facade.update_use_case.execute.assert_called_once_with(reference, **data)
+
+
+    def test_update_comments_transaction(self):
+        reference = 'reference'
+        data = {'comments': 'comments'}
+
+        self.controller.update_transaction(reference, **data)
+
+        self.mock_facade.update_use_case.execute.assert_called_once_with(reference, **data)
+
+
 if __name__ == '__main__':
     unittest.main()
