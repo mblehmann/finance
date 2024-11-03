@@ -82,14 +82,14 @@ class History:
     
     def delete_transaction(self, reference: str) -> Transaction:
         if not self.has_transaction(reference):
-            raise TransactionNotFoundException(f'Failed to update transaction. Transaction with reference "{reference}" does not exist')
+            raise TransactionNotFoundException(f'Failed to delete transaction. Transaction with reference "{reference}" does not exist')
 
         transaction = self.items.pop(reference)
         return transaction
     
     def get_transaction(self, reference: str) -> Transaction:
         if not self.has_transaction(reference):
-            raise TransactionNotFoundException(f'Failed to update transaction. Transaction with reference "{reference}" does not exist')
+            raise TransactionNotFoundException(f'Failed to get transaction. Transaction with reference "{reference}" does not exist')
 
         transaction = self.items[reference]
         return transaction

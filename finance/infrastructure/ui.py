@@ -222,7 +222,15 @@ class HistoryCmd(cmd.Cmd):
             print(f'The month should be a number. {str(e)}')
             return
 
-        self.history_controller.update_transaction(reference, category, month, tag, comments)
+        fields = {'category': category, 'month': month, 'tag': tag, 'comments': comments}
+        self.history_controller.update_transaction(reference, **fields)
+
+    # do_update_category
+    # do_update_month
+    # do_update_tag
+    # do_update_comments
+
+    # do_exclude True/False
 
     def do_delete(self, args: str) -> None:
         """delete <reference>: Deletes the transaction with given reference"""

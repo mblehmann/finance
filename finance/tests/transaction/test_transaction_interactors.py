@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import ANY, Mock, call
 from uuid import uuid4
 
-from finance.application.transaction_interactor import ImportTransactionsUseCase
+from finance.application.transaction_interactor import ImportTransactionsUseCase, UpdateTransactionUseCase
 from finance.application.dto import InteractorResultDto, TransactionDto
 from finance.application.interface import HistoryPresenterInterface, TransactionImporterInterface
 from finance.domain.transaction import History, Transaction
@@ -150,6 +150,48 @@ class TestHistoryUseCases(unittest.TestCase):
 
         self.assertEqual(0, len(self.history.items))
         self.mock_presenter.present_import_transactions.assert_called_once_with(result)
+
+    def test_update_transaction_use_case(self):
+        reference = 'reference'
+
+        test_cases = [
+            {'category': 'category', 'month': 8, 'tag': 'tag', 'comments': 'comments'},
+            {'category': 'category'},
+            {'month': 8},
+            {'tag': 'tag'},
+            {'comments': 'comments'},
+        ]
+
+        for update in test_cases:
+            with self.subTest(fields=list(update.keys())):
+                self.history = History()
+                self.mock_presenter.reset_mock()
+                transaction = Transaction(reference, date(2024, 10, 8), 'source', 1400.84, 'nothing to add', 'vacation', 4, 'gift', 'testing', False)
+                self.history.add_transaction(transaction)
+
+                response = transaction.to_dict()
+                response.update(update)
+                result = InteractorResultDto(success=True, operation='Update Transaction', data=response)
+                use_case = UpdateTransactionUseCase(self.history, self.mock_presenter)
+
+                use_case.execute(reference, **update)
+
+                for key, value in update.items():
+                    self.assertEqual(value, self.history.items[reference].__getattribute__(key))
+                self.mock_presenter.present_transaction.assert_called_once_with(result)
+
+    def test_update_non_existing_budget_item_returns_error(self):
+        reference = 'reference'
+        update = {'category': 'category', 'month': 8, 'tag': 'tag', 'comments': 'comments'}
+        error = f'Failed to get transaction. Transaction with reference "reference" does not exist'
+        result = InteractorResultDto(success=False, operation="Update Transaction", error=error)
+
+        use_case = UpdateTransactionUseCase(self.history, self.mock_presenter)
+
+        use_case.execute(reference, **update)
+
+        self.assertNotIn(reference, self.history.items)
+        self.mock_presenter.present_transaction.assert_called_once_with(result)
 
 
 if __name__ == '__main__':

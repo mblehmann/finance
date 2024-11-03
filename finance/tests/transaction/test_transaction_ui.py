@@ -41,6 +41,58 @@ class TestHistoryCmd(unittest.TestCase):
 
         mock_do_help.assert_called_once_with('import')
 
+    def test_update_success(self):
+        reference = 'reference'
+        category = 'category'
+        month = 8
+        tag = 'tag'
+        comments = 'comments'
+        args = f'{reference} {category} {month} {tag} {comments}'
+        fields = {'category': category, 'month': month, 'tag': tag, 'comments': comments}
+
+        self.ui.do_update(args)
+
+        self.mock_controller.update_transaction.assert_called_once_with(reference, **fields)
+
+    def test_update_more_than_five_parameters_success(self):
+        reference = 'reference'
+        category = 'category'
+        month = 8
+        tag = 'tag'
+        comments = 'comments more than one word'
+        args = f'{reference} {category} {month} {tag} {comments}'
+        fields = {'category': category, 'month': month, 'tag': tag, 'comments': comments}
+
+        self.ui.do_update(args)
+
+        self.mock_controller.update_transaction.assert_called_once_with(reference, **fields)
+
+    @patch.object(HistoryCmd, 'do_help')
+    def test_update_less_than_five_parameters_fails(self, mock_do_help):
+        reference = 'reference'
+        category = 'category'
+        month = 8
+        tag = 'tag'
+        comments = ''
+        args = f'{reference} {category} {month} {tag} {comments}'
+
+        self.ui.do_update(args)
+
+        mock_do_help.assert_called_once_with('update')
+
+    @patch('builtins.print')
+    def test_update_month_invalid_fails(self, mock_print):
+        reference = 'reference'
+        category = 'category'
+        month = 'august'
+        tag = 'tag'
+        comments = 'comments'
+        args = f'{reference} {category} {month} {tag} {comments}'
+
+        self.ui.do_update(args)
+
+        mock_print.assert_called_once_with('The month should be a number. invalid literal for int() with base 10: \'august\'')
+
 
 if __name__ == '__main__':
     unittest.main()

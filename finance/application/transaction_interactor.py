@@ -59,7 +59,7 @@ class UpdateTransactionUseCase:
         self.history = history
         self.presenter = presenter
 
-    def execute(self, reference: str, category: str, month: int, tag: str, comments: str) -> None:        
+    def execute(self, reference: str, **kwargs) -> None:        
         result: InteractorResultDto = None
         operation = 'Update Transaction'
         
@@ -69,9 +69,10 @@ class UpdateTransactionUseCase:
             result = InteractorResultDto(success=False, operation=operation, error=str(e))
 
         if result is None:
-            transaction.category = category
-            transaction.comments = comments
-
+            fields = ['category', 'month', 'tag', 'comments']
+            for field in fields:
+                if field in kwargs:
+                    transaction.__setattr__(field, kwargs[field])
             try:
                 response = self.history.update_transaction(transaction)
                 result = InteractorResultDto(success=True, operation=operation, data=response.to_dict())
