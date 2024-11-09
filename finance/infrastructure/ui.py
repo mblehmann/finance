@@ -279,7 +279,27 @@ class HistoryCmd(cmd.Cmd):
         fields = {'comments': comments}
         self.history_controller.update_transaction(reference, **fields)
 
-    # do_exclude True/False
+    def do_ignore(self, args: str) -> None:
+        """ignore <reference> <True/False>: Ignores or includes in the budget the transaction with given reference"""
+        parameters = args.split()
+        if len(parameters) < 2:
+            self.do_help('ignore')
+            return
+        
+        reference, ignore = parameters[:2]
+        if ignore.lower() == 'false':
+            ignore = False
+        elif ignore.lower() == 'true':
+            ignore = True
+        else:
+            print(f'Ignore paramater should be True or False: \'{ignore}\'')
+            return
+
+        self.history_controller.ignore_transaction(reference, ignore)
+
+    def do_list(self, args: str) -> None:
+        """list <month>: Lists all transactions in the given month  """
+        pass
 
     def do_delete(self, args: str) -> None:
         """delete <reference>: Deletes the transaction with given reference"""
@@ -370,9 +390,11 @@ class FinanceCmd(cmd.Cmd):
         
     def do_history(self, _) -> None:
         """enter history prompt"""
+        self.history_cmd.cmdloop()
         
     def do_report(self, _) -> None:
         """enter report prompt"""
+        self.report_cmd.cmdloop()
 
     def do_import_transactions(self, args: str) -> None:
         """import_transactions <filename>: Imports the transactions in the file"""

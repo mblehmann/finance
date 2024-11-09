@@ -227,6 +227,49 @@ class TestHistoryCmd(unittest.TestCase):
 
         mock_do_help.assert_called_once_with('update_comments')
 
+    def test_ignore_success(self):
+        test_cases = [True, False]
+        reference = 'reference'
+
+        for case in test_cases:
+            with self.subTest(exclude=case):
+                self.mock_controller.reset_mock()
+                args = f'{reference} {case}'
+
+                self.ui.do_ignore(args)
+
+                self.mock_controller.ignore_transaction.assert_called_once_with(reference, case)
+
+    def test_ignore_more_than_two_parameters_success(self):
+        reference = 'reference'
+        ignore = True
+        trailer = 'and more words'
+        args = f'{reference} {ignore} {trailer}'
+
+        self.ui.do_ignore(args)
+
+        self.mock_controller.ignore_transaction.assert_called_once_with(reference, ignore)
+
+    @patch.object(HistoryCmd, 'do_help')
+    def test_ignore_less_than_two_parameters_fails(self, mock_do_help):
+        reference = 'reference'
+        ignore = ''
+        args = f'{reference} {ignore}'
+
+        self.ui.do_ignore(args)
+
+        mock_do_help.assert_called_once_with('ignore')
+
+    @patch('builtins.print')
+    def test_ignore_parameter_invalid_fails(self, mock_print):
+        reference = 'reference'
+        ignore = 34
+        args = f'{reference} {ignore}'
+
+        self.ui.do_ignore(args)
+
+        mock_print.assert_called_once_with('Ignore paramater should be True or False: \'34\'')
+        
 
 if __name__ == '__main__':
     unittest.main()
