@@ -3,7 +3,7 @@ from unittest.mock import Mock
 from uuid import uuid4
 
 from finance.application.interface import HistoryPresenterInterface, InputReaderInterface
-from finance.application.transaction_interactor import IgnoreTransactionUseCase, ImportTransactionsUseCase, UpdateTransactionUseCase
+from finance.application.transaction_interactor import IgnoreTransactionUseCase, ImportTransactionsUseCase, ListTransactionsUseCase, UpdateTransactionUseCase
 from finance.infrastructure.controller import CmdHistoryController
 from finance.interface.facade import HistoryUseCaseFacade
 
@@ -14,6 +14,7 @@ class TestCmdBudgetController(unittest.TestCase):
         self.mock_facade.import_use_case = Mock(spec=ImportTransactionsUseCase)
         self.mock_facade.update_use_case = Mock(spec=UpdateTransactionUseCase)
         self.mock_facade.ignore_use_case = Mock(spec=IgnoreTransactionUseCase)
+        self.mock_facade.list_use_case = Mock(spec=ListTransactionsUseCase)
         self.mock_reader = Mock(spec=InputReaderInterface)
         self.mock_presenter = Mock(spec=HistoryPresenterInterface)
         self.controller = CmdHistoryController(self.mock_facade, self.mock_reader, self.mock_presenter)
@@ -77,6 +78,13 @@ class TestCmdBudgetController(unittest.TestCase):
         self.controller.ignore_transaction(reference, ignore)
 
         self.mock_facade.ignore_use_case.execute.assert_called_once_with(reference, ignore)
+
+    def test_list_transaction(self):
+        month = 8
+
+        self.controller.list_transactions(month)
+
+        self.mock_facade.list_use_case.execute.assert_called_once_with(month)
 
 
 if __name__ == '__main__':

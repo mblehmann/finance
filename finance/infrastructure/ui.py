@@ -299,7 +299,18 @@ class HistoryCmd(cmd.Cmd):
 
     def do_list(self, args: str) -> None:
         """list <month>: Lists all transactions in the given month  """
-        pass
+        parameters = args.split()
+        if len(parameters) < 1:
+            self.do_help('list')
+            return
+        
+        try:
+            month = int(parameters[0])
+        except ValueError as e:
+            print(f'The month should be a number. {str(e)}')
+            return
+        
+        self.history_controller.list_transactions(month)
 
     def do_delete(self, args: str) -> None:
         """delete <reference>: Deletes the transaction with given reference"""

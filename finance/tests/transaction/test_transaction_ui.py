@@ -269,7 +269,42 @@ class TestHistoryCmd(unittest.TestCase):
         self.ui.do_ignore(args)
 
         mock_print.assert_called_once_with('Ignore paramater should be True or False: \'34\'')
-        
+    
+    def test_list_success(self):
+        month = 8
+        args = f'{month}'
+
+        self.ui.do_list(args)
+
+        self.mock_controller.list_transactions.assert_called_once_with(month)
+
+    def test_list_more_than_one_parameter_success(self):
+        month = 8
+        trailer = 'and more words'
+        args = f'{month} {trailer}'
+
+        self.ui.do_list(args)
+
+        self.mock_controller.list_transactions.assert_called_once_with(month)
+
+    @patch.object(HistoryCmd, 'do_help')
+    def test_list_less_than_one_parameter_fails(self, mock_do_help):
+        month = ''
+        args = f'{month}'
+
+        self.ui.do_list(args)
+
+        mock_do_help.assert_called_once_with('list')
+
+    @patch('builtins.print')
+    def test_list_month_invalid_fails(self, mock_print):
+        month = 'august'
+        args = f'{month}'
+
+        self.ui.do_list(args)
+
+        mock_print.assert_called_once_with('The month should be a number. invalid literal for int() with base 10: \'august\'')
+
 
 if __name__ == '__main__':
     unittest.main()

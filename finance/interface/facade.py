@@ -3,7 +3,7 @@ from typing import Self
 
 from finance.application.interface import BudgetPresenterInterface, BudgetRepositoryInterface, HistoryPresenterInterface, HistoryRepositoryInterface, ReportPresenterInterface, TransactionImporterInterface
 from finance.application.report_interactor import AllCategoryReportUseCase, CategoryReportUseCase, MonthResultUseCase
-from finance.application.transaction_interactor import DeleteTransactionUseCase, IgnoreTransactionUseCase, ImportTransactionsUseCase, LoadHistoryUseCase, ReviewTransactionsUseCase, SaveHistoryUseCase, UpdateTransactionUseCase
+from finance.application.transaction_interactor import DeleteTransactionUseCase, IgnoreTransactionUseCase, ImportTransactionsUseCase, ListTransactionsUseCase, LoadHistoryUseCase, ReviewTransactionsUseCase, SaveHistoryUseCase, UpdateTransactionUseCase
 from finance.domain.transaction import History
 from finance.domain.budget import Budget
 from finance.application.budget_interactor import (
@@ -54,6 +54,7 @@ class HistoryUseCaseFacade:
     update_use_case: UpdateTransactionUseCase
     ignore_use_case: IgnoreTransactionUseCase
     delete_use_case: DeleteTransactionUseCase
+    list_use_case: ListTransactionsUseCase
     save_use_case: SaveHistoryUseCase
     load_use_case: LoadHistoryUseCase
 
@@ -67,6 +68,7 @@ class HistoryUseCaseFacadeFactory:
                                     UpdateTransactionUseCase(history, presenter),
                                     IgnoreTransactionUseCase(history, presenter),
                                     DeleteTransactionUseCase(history, presenter),
+                                    ListTransactionsUseCase(history, presenter),
                                     SaveHistoryUseCase(history, repository, presenter),
                                     LoadHistoryUseCase(history, repository, presenter))
 

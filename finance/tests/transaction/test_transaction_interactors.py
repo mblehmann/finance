@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import ANY, Mock, call
 from uuid import uuid4
 
-from finance.application.transaction_interactor import IgnoreTransactionUseCase, ImportTransactionsUseCase, UpdateTransactionUseCase
+from finance.application.transaction_interactor import IgnoreTransactionUseCase, ImportTransactionsUseCase, ListTransactionsUseCase, UpdateTransactionUseCase
 from finance.application.dto import InteractorResultDto, TransactionDto
 from finance.application.interface import HistoryPresenterInterface, TransactionImporterInterface
 from finance.domain.transaction import History, Transaction
@@ -226,6 +226,27 @@ class TestHistoryUseCases(unittest.TestCase):
 
         self.assertNotIn(reference, self.history.items)
         self.mock_presenter.present_transaction.assert_called_once_with(result)
+
+    def test_list_transactions_use_case(self):
+        transaction1 = Transaction('ref1', date(2024, 8, 10), 'source1', 1400.84, 'nothing to add1', 'vacation', 8, 'gift', 'testing1', False)
+        transaction2 = Transaction('ref2', date(2024, 8, 1), 'source2', 10.33, 'nothing to add2', 'groceries', 8, 'lidl', 'testing2', False)
+        transaction3 = Transaction('ref3', date(2024, 8, 20), 'source3', 22.05, 'nothing to add3', 'eatingout', 8, 'tgtg', 'testing3', True)
+        transaction4 = Transaction('ref4', date(2024, 8, 30), 'source4', 132.47, 'nothing to add4', 'coinsurance', 9, 'oegk', 'testing4', False)
+        transaction5 = Transaction('ref5', date(2024, 8, 15), 'source5', 5.23, 'nothing to add5', 'groceries', 8, 'hofer', 'testing5', False)
+        self.history.add_transaction(transaction1)
+        self.history.add_transaction(transaction2)
+        self.history.add_transaction(transaction3)
+        self.history.add_transaction(transaction4)
+        self.history.add_transaction(transaction5)
+        month = 8
+
+        response = [transaction2.to_dict(), transaction1.to_dict(), transaction5.to_dict(), transaction3.to_dict()]
+        result = InteractorResultDto(success=True, operation='List Transactions', data=response)
+        use_case = ListTransactionsUseCase(self.history, self.mock_presenter)
+
+        use_case.execute(month)
+
+        self.mock_presenter.present_history.assert_called_once_with(result)
 
 
 if __name__ == '__main__':

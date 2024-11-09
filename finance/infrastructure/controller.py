@@ -92,7 +92,10 @@ class CmdHistoryController(HistoryControllerInterface):
 
     def delete_transaction(self, reference: str) -> None:
         self.history_use_cases.delete_use_case.execute(reference)
-        
+
+    def list_transactions(self, month: int) -> None:
+        self.history_use_cases.list_use_case.execute(month)
+
     def save_budget(self, project_name: str) -> None:
         self.history_use_cases.save_use_case.execute(project_name)
         

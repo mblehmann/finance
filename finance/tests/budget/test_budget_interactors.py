@@ -239,7 +239,7 @@ class TestBudgetUseCases(unittest.TestCase):
 
         use_case.execute()
 
-        self.mock_presenter.present_budget_list.assert_called_once_with(result)    
+        self.mock_presenter.present_budget_list.assert_called_once_with(result)
 
     def test_show_budget_overview_use_case(self):
         item1 = BudgetItem(uuid4(), "Test Item 1", 100.0, BudgetCategory.Needs, "Test Note")

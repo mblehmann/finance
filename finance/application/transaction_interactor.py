@@ -127,6 +127,21 @@ class DeleteTransactionUseCase:
         self.presenter.present_transaction(result)
 
 
+class ListTransactionsUseCase:
+
+    def __init__(self, history: History, presenter: HistoryPresenterInterface) -> None:
+        self.history = history
+        self.presenter = presenter
+
+    def execute(self, month: int) -> None:
+        result: InteractorResultDto = None
+        operation = 'List Transactions'
+        transactions = sorted(self.history.get_transactions_by_month(month), key=lambda x: x.day)
+        response = [transaction.to_dict() for transaction in transactions]
+        result = InteractorResultDto(success=True, operation=operation, data=response)
+        self.presenter.present_history(result)
+
+
 class SaveHistoryUseCase:
 
     def __init__(self, history: History, repository: HistoryRepositoryInterface, presenter: HistoryPresenterInterface) -> None:

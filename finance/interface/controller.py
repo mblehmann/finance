@@ -58,6 +58,9 @@ class HistoryControllerInterface(Protocol):
     def delete_transaction(self, reference: str) -> None:
         ...
         
+    def list_transactions(self, month: int) -> None:
+        ...
+
     def save_budget(self, project_name: str) -> None:
         ...
         
