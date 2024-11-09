@@ -73,8 +73,9 @@ class TransactionViewModel:
     notes: str
     category: str
     month: str
+    tag: str
     comments: str
-    exclude: str
+    ignore: str
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any], notes_length: int = 0) -> Self:
@@ -86,8 +87,9 @@ class TransactionViewModel:
             notes=data['notes'][:notes_length] if notes_length else data['notes'],
             category=data['category'],
             month=data['month'],
+            tag=data['tag'],
             comments=data['comments'],
-            exclude=data['exclude'],
+            ignore=data['ignore'],
         )
 
     def to_dict(self) -> Dict[str, str]:
@@ -99,8 +101,9 @@ class TransactionViewModel:
             'notes': self.notes,
             'category': self.category,
             'month': self.month,
+            'tag': self.tag,
             'comments': self.comments,
-            'exclude': self.exclude,
+            'ignore': self.ignore,
         }
     
 

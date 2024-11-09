@@ -98,8 +98,7 @@ class IgnoreTransactionUseCase:
             result = InteractorResultDto(success=False, operation=operation, error=str(e))
 
         if result is None:
-            transaction.category = category
-            transaction.comments = comments
+            transaction.ignore = ignore
 
             try:
                 response = self.history.update_transaction(transaction)

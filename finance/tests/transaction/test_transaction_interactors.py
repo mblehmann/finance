@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import ANY, Mock, call
 from uuid import uuid4
 
-from finance.application.transaction_interactor import ImportTransactionsUseCase, UpdateTransactionUseCase
+from finance.application.transaction_interactor import IgnoreTransactionUseCase, ImportTransactionsUseCase, UpdateTransactionUseCase
 from finance.application.dto import InteractorResultDto, TransactionDto
 from finance.application.interface import HistoryPresenterInterface, TransactionImporterInterface
 from finance.domain.transaction import History, Transaction
@@ -180,7 +180,7 @@ class TestHistoryUseCases(unittest.TestCase):
                     self.assertEqual(value, self.history.items[reference].__getattribute__(key))
                 self.mock_presenter.present_transaction.assert_called_once_with(result)
 
-    def test_update_non_existing_budget_item_returns_error(self):
+    def test_update_non_existing_transaction_returns_error(self):
         reference = 'reference'
         update = {'category': 'category', 'month': 8, 'tag': 'tag', 'comments': 'comments'}
         error = f'Failed to get transaction. Transaction with reference "reference" does not exist'
@@ -189,6 +189,40 @@ class TestHistoryUseCases(unittest.TestCase):
         use_case = UpdateTransactionUseCase(self.history, self.mock_presenter)
 
         use_case.execute(reference, **update)
+
+        self.assertNotIn(reference, self.history.items)
+        self.mock_presenter.present_transaction.assert_called_once_with(result)
+
+    def test_ignore_transaction_use_case(self):
+        reference = 'reference'
+        test_cases = [True, False]
+
+        for ignore in test_cases:
+            with self.subTest(ignore=ignore):
+                self.history = History()
+                self.mock_presenter.reset_mock()
+                transaction = Transaction(reference, date(2024, 10, 8), 'source', 1400.84, 'nothing to add', 'vacation', 4, 'gift', 'testing', not ignore)
+                self.history.add_transaction(transaction)
+
+                response = transaction.to_dict()
+                response['ignore'] = ignore
+                result = InteractorResultDto(success=True, operation='Ignore Transaction', data=response)
+                use_case = IgnoreTransactionUseCase(self.history, self.mock_presenter)
+
+                use_case.execute(reference, ignore)
+
+                self.assertEqual(ignore, self.history.items[reference].ignore)
+                self.mock_presenter.present_transaction.assert_called_once_with(result)
+    
+    def test_ignore_non_existing_transaction_returns_error(self):
+        reference = 'reference'
+        ignore = True
+        error = f'Failed to get transaction. Transaction with reference "reference" does not exist'
+        result = InteractorResultDto(success=False, operation="Ignore Transaction", error=error)
+
+        use_case = IgnoreTransactionUseCase(self.history, self.mock_presenter)
+
+        use_case.execute(reference, ignore)
 
         self.assertNotIn(reference, self.history.items)
         self.mock_presenter.present_transaction.assert_called_once_with(result)

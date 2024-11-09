@@ -228,17 +228,17 @@ class TestHistoryCmd(unittest.TestCase):
         mock_do_help.assert_called_once_with('update_comments')
 
     def test_ignore_success(self):
-        test_cases = [True, False]
         reference = 'reference'
+        test_cases = [True, False]
 
-        for case in test_cases:
-            with self.subTest(exclude=case):
+        for ignore in test_cases:
+            with self.subTest(ignore=ignore):
                 self.mock_controller.reset_mock()
-                args = f'{reference} {case}'
+                args = f'{reference} {ignore}'
 
                 self.ui.do_ignore(args)
 
-                self.mock_controller.ignore_transaction.assert_called_once_with(reference, case)
+                self.mock_controller.ignore_transaction.assert_called_once_with(reference, ignore)
 
     def test_ignore_more_than_two_parameters_success(self):
         reference = 'reference'

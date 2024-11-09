@@ -3,7 +3,7 @@ from unittest.mock import Mock
 from uuid import uuid4
 
 from finance.application.interface import HistoryPresenterInterface, InputReaderInterface
-from finance.application.transaction_interactor import ImportTransactionsUseCase, UpdateTransactionUseCase
+from finance.application.transaction_interactor import IgnoreTransactionUseCase, ImportTransactionsUseCase, UpdateTransactionUseCase
 from finance.infrastructure.controller import CmdHistoryController
 from finance.interface.facade import HistoryUseCaseFacade
 
@@ -13,6 +13,7 @@ class TestCmdBudgetController(unittest.TestCase):
         self.mock_facade = Mock(spec=HistoryUseCaseFacade)
         self.mock_facade.import_use_case = Mock(spec=ImportTransactionsUseCase)
         self.mock_facade.update_use_case = Mock(spec=UpdateTransactionUseCase)
+        self.mock_facade.ignore_use_case = Mock(spec=IgnoreTransactionUseCase)
         self.mock_reader = Mock(spec=InputReaderInterface)
         self.mock_presenter = Mock(spec=HistoryPresenterInterface)
         self.controller = CmdHistoryController(self.mock_facade, self.mock_reader, self.mock_presenter)
@@ -37,7 +38,6 @@ class TestCmdBudgetController(unittest.TestCase):
 
         self.mock_facade.update_use_case.execute.assert_called_once_with(reference, **data)
 
-
     def test_update_category_transaction(self):
         reference = 'reference'
         data = {'category': 'category'}
@@ -45,7 +45,6 @@ class TestCmdBudgetController(unittest.TestCase):
         self.controller.update_transaction(reference, **data)
 
         self.mock_facade.update_use_case.execute.assert_called_once_with(reference, **data)
-
 
     def test_update_month_transaction(self):
         reference = 'reference'
@@ -55,7 +54,6 @@ class TestCmdBudgetController(unittest.TestCase):
 
         self.mock_facade.update_use_case.execute.assert_called_once_with(reference, **data)
 
-
     def test_update_tag_transaction(self):
         reference = 'reference'
         data = {'tag': 'tag'}
@@ -64,7 +62,6 @@ class TestCmdBudgetController(unittest.TestCase):
 
         self.mock_facade.update_use_case.execute.assert_called_once_with(reference, **data)
 
-
     def test_update_comments_transaction(self):
         reference = 'reference'
         data = {'comments': 'comments'}
@@ -72,6 +69,14 @@ class TestCmdBudgetController(unittest.TestCase):
         self.controller.update_transaction(reference, **data)
 
         self.mock_facade.update_use_case.execute.assert_called_once_with(reference, **data)
+
+    def test_ignore_transaction(self):
+        reference = 'reference'
+        ignore = True
+
+        self.controller.ignore_transaction(reference, ignore)
+
+        self.mock_facade.ignore_use_case.execute.assert_called_once_with(reference, ignore)
 
 
 if __name__ == '__main__':
